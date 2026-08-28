@@ -427,7 +427,7 @@
       <h3>What exists today</h3>
       <p>The current schema is sound in places — contacts, companies, and activity all follow reasonable relational patterns. The problems are concentrated in two spots, both the result of extending the system reactively over ~20 years rather than remodeling it.</p>
       <div class="diagram">
-        <div class="dbox amber">dbo_tblProjects<br><small>1 table, ~90 fields</small></div>
+        <div class="dbox amber">dbo_tblProjects<br><small>1 table, 100+ fields</small></div>
         <div class="darrow">&#8594;</div>
         <div class="dbox">proJob flag<br><small>0 = Project&nbsp;/&nbsp;-1 = Job</small></div>
         <div class="darrow">&#8594;</div>
@@ -457,7 +457,7 @@
     <div class="callout tech">
       <span class="tag"></span>
       <span class="label">Technical decision</span>
-      <p>Database platform (SQL Server current-gen vs. PostgreSQL) is decided alongside the app framework, not in isolation — see S-03. Staying on SQL Server minimizes T-SQL rewrite risk; moving to Postgres only pays off if the app layer is also being rebuilt.</p>
+      <p>The current Master Matrix database is a legacy schema that's carried Access-era conventions (like the -1/0 boolean flags) for roughly two decades. The question isn't whether to leave it behind — it's what to replace it with, and that choice is made alongside the app framework decision in S-03, not in isolation. A current-generation SQL Server keeps existing T-SQL and schema logic largely intact if the app layer stays close to its current shape; moving to PostgreSQL only pays off if the app layer is also being rebuilt from scratch, since otherwise the migration cost is paid twice for no real gain.</p>
     </div>
     <div class="callout biz">
       <span class="tag"></span>
@@ -506,17 +506,12 @@
     <div class="section">
       <h3>How each module actually cuts over</h3>
       <ul>
-        <li><b>Keeping both databases in sync — two possible ways to do it.</b> One option is dual-write: modify the application so it explicitly writes every change to both databases at once. The other is CDC: infrastructure watches the source database's transaction log and mirrors changes automatically, with no application changes needed. <b>We use CDC</b> — it avoids touching application write logic and the risk of two writes disagreeing mid-transaction.</li>
-        <li><b>Continuous reconciliation</b> — an automated job compares record counts and checksums between both systems and alerts on any drift, rather than relying on a one-time check.</li>
-        <li><b>Rollback path</b> — after cutover, the same CDC mechanism runs in reverse: it watches the new database's transaction log and mirrors changes back to the old one, so writes can be pointed back at the old database with zero data loss if something's wrong within the rollback window.</li>
+        <li><b>Initial bulk copy</b> — a one-time transformation pass moves everything that already exists in the old table into the new, redesigned schema for that module.</li>
+        <li><b>CDC + continuous reconciliation take over from there</b> — CDC watches the old database's transaction log and automatically mirrors every live change into the new database from that point forward, while reconciliation runs continuously alongside it, comparing record counts and checksums between both systems and alerting on any drift rather than relying on a one-time check.</li>
+        <li><b>Rollback safety net — two possible ways to build it.</b> Once a module cuts over, the old database needs to stay caught up in case a rollback is ever needed. Same two options as before apply here, just in reverse: <b>reverse CDC</b> (infrastructure mirrors changes from the new database back to the old one automatically) or <b>dual-write</b> (application code explicitly writes to both). <b>We use reverse CDC</b> — same reasoning as the forward direction: no application write logic to touch, and no risk of two writes disagreeing mid-transaction if one succeeds and the other fails.</li>
       </ul>
     </div>
 
-    <div class="callout tech">
-      <span class="tag"></span>
-      <span class="label">Technical decision</span>
-      <p>Sync engine: SQL Server's native Change Data Capture / Change Tracking is the lowest-friction starting point since we're already on SQL Server; a tool like Debezium is the fallback if we need finer control.</p>
-    </div>
     <div class="callout tech">
       <span class="tag"></span>
       <span class="label">Technical decision</span>
