@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Swirnow CRM Modernization Proposal</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='4' y='4' width='56' height='56' rx='4' fill='%23ECE3C6' stroke='%231A1712' stroke-width='4'/%3E%3Ccircle cx='20' cy='20' r='6' fill='%23B7A87D' stroke='%231A1712' stroke-width='3'/%3E%3Cpath d='M30 44 L50 24' stroke='%23DD5A1E' stroke-width='5' stroke-linecap='round'/%3E%3Cpath d='M30 24 L50 44' stroke='%232F5670' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<meta name="theme-color" content="#ECE3C6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --kraft-rail: #C9BB94;
+    --kraft-rail-dark: #B7A87D;
+    --tag: #ECE3C6;
+    --tag-light: #F5EFDA;
+    --ink: #1A1712;
+    --ink-soft: #4E4A3D;
+    --rule: #9C9270;
+    --orange: #DD5A1E;
+    --orange-deep: #A63F10;
+    --steel: #2F5670;
+    --steel-deep: #1F3C50;
+    --caution: #E8B23D;
+    --hazard-dark: #1A1712;
+    --paper: #FBF8EE;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--kraft-rail-dark);
+    background-image:
+      radial-gradient(rgba(26,23,18,0.05) 1px, transparent 1px);
+    background-size:16px 16px;
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+    min-height:100vh;
+  }
+  a{color:var(--steel);}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 20px 80px;}
+
+  /* ---------- Title block header ---------- */
+  .titleblock{
+    background:var(--tag-light);
+    border:2px solid var(--ink);
+    padding:26px 28px;
+    position:relative;
+    margin-bottom:24px;
+    clip-path:polygon(0 0, calc(100% - 34px) 0, 100% 34px, 100% 100%, 0 100%);
+  }
+  .titleblock::before{
+    content:"";
+    position:absolute;
+    top:16px;right:16px;
+    width:16px;height:16px;
+    border-radius:50%;
+    background:var(--kraft-rail-dark);
+    border:2px solid var(--ink);
+  }
+  .eyebrow{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    letter-spacing:3px;
+    color:var(--orange);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:clamp(30px,4.6vw,46px);
+    line-height:1.05;
+    margin:0 0 12px;
+    color:var(--ink);
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+  }
+  .subhead{
+    font-size:14.5px;
+    color:var(--ink-soft);
+    max-width:620px;
+    line-height:1.7;
+    margin:0;
+  }
+  .meta-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px 28px;
+    margin-top:20px;
+    padding-top:16px;
+    border-top:1px dashed var(--rule);
+    font-size:12px;
+    color:var(--ink-soft);
+    letter-spacing:0.3px;
+  }
+  .meta-row span b{color:var(--ink);font-weight:700;}
+
+  /* ---------- Layout: hanging tags + ticket ---------- */
+  .layout{
+    display:block;
+  }
+  .sheet-index{
+    display:flex;
+    flex-direction:row;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    gap:0 14px;
+    padding:6px 6px 0;
+    position:relative;
+  }
+  .sheet-index::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:-2px;
+    height:3px;
+    background:var(--ink);
+  }
+  .tab-btn{
+    position:relative;
+    background:var(--tag);
+    border:2px solid var(--ink);
+    border-bottom:none;
+    color:var(--ink-soft);
+    font-family:'IBM Plex Mono', monospace;
+    font-size:11.5px;
+    letter-spacing:0.5px;
+    padding:14px 18px 14px 36px;
+    cursor:pointer;
+    text-align:left;
+    min-width:126px;
+    clip-path:polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
+    transition:background 0.15s, color 0.15s, transform 0.15s;
+    margin-bottom:0;
+    z-index:1;
+  }
+  .tab-btn::before{
+    content:"";
+    position:absolute;
+    left:14px;top:50%;
+    width:11px;height:11px;
+    border-radius:50%;
+    background:var(--kraft-rail-dark);
+    box-shadow:inset 0 1px 3px rgba(0,0,0,0.45), 0 0 0 2px var(--ink);
+    transform:translateY(-50%);
+  }
+  .tab-btn .num{display:block;font-family:'Oswald', sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;color:var(--orange);margin-bottom:3px;}
+  .tab-btn .label{display:block;font-size:11px;font-weight:600;letter-spacing:0.3px;color:inherit;text-transform:uppercase;}
+  .tab-btn:hover{background:var(--tag-light);color:var(--ink);}
+  .tab-btn:focus-visible{outline:2px solid var(--steel); outline-offset:2px;}
+  .tab-btn.active{background:var(--steel-deep);color:var(--tag-light);transform:translateY(-5px);padding-top:19px;}
+  .tab-btn.active::before{box-shadow:inset 0 1px 3px rgba(0,0,0,0.45), 0 0 0 2px var(--caution);}
+  .tab-btn.active .num{color:var(--caution);}
+  .tab-btn.active .label{color:var(--tag-light);}
+  .sheets{margin-top:6px;}
+
+  /* ---------- Sheet body (the "ticket") ---------- */
+  .sheets{position:relative;}
+  .sheet{
+    background:var(--paper);
+    border:2px solid var(--ink);
+    padding:44px 38px 38px;
+    position:relative;
+    display:none;
+    clip-path:polygon(0 0, calc(100% - 40px) 0, 100% 40px, 100% 100%, 0 100%);
+  }
+  .sheet.active{display:block;}
+  .sheet::before{
+    content:"";
+    position:absolute;
+    top:20px;right:20px;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--kraft-rail-dark);
+    border:2px solid var(--ink);
+  }
+  .sheet-num{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--orange);
+    letter-spacing:2.5px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .sheet h2{
+    font-family:'Oswald', sans-serif;
+    font-size:clamp(26px,3.4vw,36px);
+    font-weight:700;
+    margin:0 0 10px;
+    color:var(--ink);
+    text-transform:uppercase;
+    letter-spacing:0.3px;
+  }
+  .sheet .sheet-sub{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    max-width:640px;
+    margin:0 0 34px;
+    line-height:1.75;
+    padding-bottom:20px;
+    border-bottom:1px dashed var(--rule);
+  }
+  .section{margin-bottom:36px;}
+  .section h3{
+    font-family:'Oswald', sans-serif;
+    font-size:19px;
+    font-weight:700;
+    color:var(--ink);
+    margin:0 0 14px;
+    text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+  .section h3::before{content:"// ";color:var(--orange);}
+  .section p{
+    font-size:14px;
+    line-height:1.85;
+    color:var(--ink-soft);
+    margin:0 0 12px;
+  }
+  .section ul{margin:0 0 12px;padding-left:0;list-style:none;}
+  .section li{font-size:14px;line-height:1.8;color:var(--ink-soft);margin-bottom:10px;padding-left:20px;position:relative;}
+  .section li::before{content:"—";position:absolute;left:0;color:var(--orange);font-weight:700;}
+  .section li b, .section p b{color:var(--ink);font-weight:700;}
+  code{
+    font-family:'IBM Plex Mono',monospace;
+    background:rgba(47,86,112,0.1);
+    color:var(--steel-deep);
+    padding:1px 6px;
+    border-radius:2px;
+    font-size:12.5px;
+    border:1px solid rgba(47,86,112,0.25);
+  }
+
+  /* ---------- Callouts ---------- */
+  .callout{
+    padding:16px 18px 16px 20px;
+    margin:18px 0;
+    position:relative;
+    font-size:13.5px;
+    line-height:1.75;
+    background:var(--tag-light);
+  }
+  .callout .tag{
+    position:absolute;
+    top:-11px;left:16px;
+    padding:2px 10px;
+    font-family:'Oswald', sans-serif;
+    font-size:11px;font-weight:700;
+    letter-spacing:1px;
+  }
+  .callout .label{display:none;}
+  /* Technical decision -> "SHOP NOTE", steel-blue, square marker */
+  .callout.tech{border:2px solid var(--steel);}
+  .callout.tech .tag{background:var(--steel);color:var(--tag-light);}
+  .callout.tech .tag::before{content:"TECH NOTE";}
+  /* Business decision -> "FIELD NOTE", safety orange, diamond feel via skew */
+  .callout.biz{border:2px solid var(--orange);}
+  .callout.biz .tag{background:var(--orange);color:var(--tag-light);}
+  .callout.biz .tag::before{content:"BUSINESS NOTE";}
+  /* Risk -> "HOLD TAG", hazard stripe border */
+  .callout.risk{
+    border:7px solid transparent;
+    border-image:repeating-linear-gradient(45deg, var(--hazard-dark) 0 9px, var(--caution) 9px 18px) 7;
+    padding:18px 20px 18px 22px;
+  }
+  .callout.risk .tag{background:var(--hazard-dark);color:var(--caution);}
+  .callout.risk .tag::before{content:"RISK NOTE";}
+  /* Closing statement -> "BOTTOM LINE", ink, no border color coding needed */
+  .callout.final{border:3px solid var(--ink);background:var(--tag);}
+  .callout.final .tag{background:var(--ink);color:var(--tag-light);}
+  .callout.final .tag::before{content:"BOTTOM LINE";}
+  .callout.final p{font-size:15px;font-weight:600;}
+  .callout p{color:var(--ink);margin:0;}
+
+  /* ---------- Diagrams ---------- */
+  .diagram{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:0;
+    margin:20px 0 8px;
+    padding:22px;
+    background:var(--tag);
+    border:2px dashed var(--rule);
+  }
+  .dbox{
+    background:var(--tag-light);
+    border:2px solid var(--ink);
+    padding:12px 14px;
+    min-width:140px;
+    flex:1 1 160px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--ink);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    text-align:center;
+    gap:4px;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .dbox.accent{border-color:var(--steel);box-shadow:0 0 0 1px rgba(47,86,112,0.3) inset;}
+  .dbox.amber{border-color:var(--orange);box-shadow:0 0 0 1px rgba(221,90,30,0.25) inset;}
+  .dbox small{display:block;color:var(--ink-soft);font-size:10px;letter-spacing:0.3px;margin-top:2px;}
+  .darrow{
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink);
+    font-size:20px;
+    flex:0 0 44px;
+    min-width:36px;
+    font-weight:700;
+  }
+  .diagram.vertical{flex-direction:column;align-items:center;}
+  .diagram.vertical .darrow{transform:rotate(90deg);flex:0 0 30px;}
+  .diagram-caption{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-top:10px;
+    margin-bottom:24px;
+    letter-spacing:0.3px;
+  }
+
+  /* ---------- Table ---------- */
+  .rolltable{width:100%;border-collapse:collapse;margin:16px 0 24px;font-size:13px;}
+  .rolltable th{
+    font-family:'Oswald', sans-serif;
+    font-size:12px;letter-spacing:1px;text-transform:uppercase;
+    color:var(--orange);text-align:left;padding:9px 12px;
+    border-bottom:2px solid var(--ink);
+    font-weight:700;
+  }
+  .rolltable td{
+    padding:11px 12px;
+    border-bottom:1px solid var(--rule);
+    color:var(--ink-soft);
+    vertical-align:top;
+  }
+  .rolltable td.step{color:var(--ink);font-weight:700;font-family:'Oswald', sans-serif;font-size:15px;}
+  .risk-chip{
+    display:inline-block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:10px;letter-spacing:0.5px;
+    padding:2px 9px;
+    text-transform:uppercase;
+    font-weight:700;
+    border:1.5px solid;
+  }
+  .risk-chip.low{background:rgba(47,86,112,0.08);color:var(--steel);border-color:var(--steel);}
+  .risk-chip.med{background:rgba(232,178,61,0.15);color:#8A6416;border-color:#8A6416;}
+  .risk-chip.high{background:rgba(221,90,30,0.12);color:var(--orange-deep);border-color:var(--orange-deep);}
+
+  /* ---------- Footer per sheet ---------- */
+  .sheet-footer{
+    margin-top:36px;
+    padding-top:18px;
+    border-top:2px dashed var(--rule);
+    display:flex;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:8px;
+    font-size:10.5px;
+    color:var(--ink-soft);
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+  }
+
+  footer.page-footer{
+    text-align:center;
+    font-size:11px;
+    color:var(--tag);
+    letter-spacing:1.5px;
+    margin-top:26px;
+    text-transform:uppercase;
+  }
+
+  @media (max-width:760px){
+    .sheet-index{
+      padding:8px 4px 0;
+    }
+    .tab-btn{min-width:130px;clip-path:none;}
+    .tab-btn::before{display:none;}
+    .tab-btn.active{transform:none;}
+    .sheet{padding:34px 20px 30px;clip-path:none;}
+    .titleblock{clip-path:none;padding:22px 20px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="titleblock">
+    <div class="eyebrow">Technical Proposal · Internal Systems</div>
+    <h1>CRM Modernization Roadmap</h1>
+    <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — without interrupting daily use by sales, project management, and back-office teams.</p>
+    <div class="meta-row">
+      <span><b>Project</b> &nbsp;Swirnow Building Systems — CRM Platform</span>
+      <span><b>Sheets</b> &nbsp;S-01 &rarr; S-05</span>
+      <span><b>Status</b> &nbsp;Proposal for review</span>
+    </div>
+  </div>
+
+  <div class="layout">
+    <div class="sheet-index" role="tablist" aria-label="Proposal sections">
+    <button class="tab-btn active" data-tab="t1" role="tab" aria-selected="true"><span class="num">S-01</span><span class="label">Database Structure</span></button>
+    <button class="tab-btn" data-tab="t2" role="tab" aria-selected="false"><span class="num">S-02</span><span class="label">Migration Strategy</span></button>
+    <button class="tab-btn" data-tab="t3" role="tab" aria-selected="false"><span class="num">S-03</span><span class="label">API Layer</span></button>
+    <button class="tab-btn" data-tab="t4" role="tab" aria-selected="false"><span class="num">S-04</span><span class="label">Front End &amp; AI</span></button>
+    <button class="tab-btn" data-tab="t5" role="tab" aria-selected="false"><span class="num">S-05</span><span class="label">The Bottom Line</span></button>
+  </div>
+
+    <div class="sheets">
+<!-- ===================== SHEET 1 — DATABASE STRUCTURE ===================== -->
+  <section class="sheet active" id="t1">
+    <div class="sheet-num">SHEET S-01 / 05</div>
+    <h2>Database Structure</h2>
+    <p class="sheet-sub">What the current schema tells us about how the business evolved, and how the redesign fixes it without losing what already works.</p>
+
+    <div class="section">
+      <h3>What exists today</h3>
+      <p>The current schema is sound in places — contacts, companies, and activity all follow reasonable relational patterns. The problems are concentrated in two spots, both the result of extending the system reactively over ~20 years rather than remodeling it.</p>
+      <div class="diagram">
+        <div class="dbox amber">dbo_tblProjects<br><small>1 table, ~90 fields</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox">proJob flag<br><small>0 = Project&nbsp;/&nbsp;-1 = Job</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox amber">+30 contract fields<br><small>only used once proJob = -1</small></div>
+      </div>
+      <div class="diagram-caption">Current state: Project and Job are the same table, distinguished only by a boolean flag</div>
+      <ul>
+        <li><b>Project ↔ Job overload</b> — a "Job" isn't a separate entity, it's a flag flip on the Projects table. Roughly 30 procurement/contract fields sit unused until that flag flips.</li>
+        <li><b>Repeating groups</b> — fields like <code>proLoadType1/2/3</code> and <code>proDeadAns1–7</code> hard-cap what should be an unlimited child list.</li>
+        <li><b>Activity scope creep</b> — the activity log carries product-sample fields (<code>actThickness</code>, <code>actPanelColor</code>) that only apply to one specific interaction type.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Proposed structure</h3>
+      <div class="diagram">
+        <div class="dbox accent">Projects<br><small>core identity + specs</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox accent">ProjectLifecycleStatus<br><small>timestamped state history</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox accent">JobDetails<br><small>1:1, only exists once contracted</small></div>
+      </div>
+      <div class="diagram-caption">Proposed: lifecycle modeled as state history, not a boolean</div>
+      <p>The repeating load-type and question fields move into proper child tables keyed back to the project, removing the artificial 3-item / 7-item caps. The activity log gets a companion <code>ActivitySampleRequest</code> table so the core log stays generic again.</p>
+    </div>
+
+    <div class="callout tech">
+      <span class="tag"></span>
+      <span class="label">Technical decision</span>
+      <p>Database platform (SQL Server current-gen vs. PostgreSQL) is decided alongside the app framework, not in isolation — see S-03. Staying on SQL Server minimizes T-SQL rewrite risk; moving to Postgres only pays off if the app layer is also being rebuilt.</p>
+    </div>
+    <div class="callout biz">
+      <span class="tag"></span>
+      <span class="label">Business decision</span>
+      <p>Confirm with Yvette whether a Job ever reverts to a Project (e.g. a signed contract falls through). If it happens in practice, the lifecycle model needs to support reversal, not just forward progression.</p>
+    </div>
+    <div class="callout risk">
+      <span class="tag"></span>
+      <span class="label">Known limitation</span>
+      <p>Historical Project&rarr;Job transition dates were never captured — only the current flag state. Migration can backfill a single snapshot per record, not a true history. Future transitions will be fully timestamped going forward.</p>
+    </div>
+
+    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-01</span><span>DATABASE STRUCTURE</span></div>
+  </section>
+
+  <!-- ===================== SHEET 2 — MIGRATION STRATEGY ===================== -->
+  <section class="sheet" id="t2">
+    <div class="sheet-num">SHEET S-02 / 05</div>
+    <h2>Migration Strategy</h2>
+    <p class="sheet-sub">The system is used every day. The plan keeps it fully operational throughout, and lets us prove the new platform works before anyone's workflow depends on it.</p>
+
+    <div class="section">
+      <h3>Approach: continuous sync, not a cutover night</h3>
+      <p>Rather than a single high-risk migration event, the old database stays live and authoritative while a change-capture process continuously mirrors every update into the new, redesigned schema in the background.</p>
+      <div class="diagram">
+        <div class="dbox accent">Legacy SQL Server<br><small>stays live &amp; authoritative</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox">Change Data Capture<br><small>streams every insert/update</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox accent">New Database<br><small>redesigned schema, validated in parallel</small></div>
+      </div>
+      <div class="diagram-caption">Both systems run simultaneously — the new one earns trust before anyone uses it live</div>
+    </div>
+
+    <div class="section">
+      <h3>Rollout order — lowest risk first</h3>
+      <table class="rolltable">
+        <tr><th>Order</th><th>Module</th><th>Why this position</th><th>Risk</th></tr>
+        <tr><td class="step">1</td><td>Contacts &amp; Company</td><td>Few dependencies, easy to validate independently</td><td><span class="risk-chip low">Low</span></td></tr>
+        <tr><td class="step">2</td><td>Marketing &amp; Expenses</td><td>Self-contained, moderate usage volume</td><td><span class="risk-chip med">Medium</span></td></tr>
+        <tr><td class="step">3</td><td>Activity Log</td><td>High volume, but logic is now well-understood</td><td><span class="risk-chip med">Medium</span></td></tr>
+        <tr><td class="step">4</td><td>Projects &amp; Jobs</td><td>Core of the business, most complex redesign — moves last, once the pipeline is proven</td><td><span class="risk-chip high">High</span></td></tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h3>How each module actually cuts over</h3>
+      <ul>
+        <li><b>Keeping both databases in sync — two possible ways to do it.</b> One option is dual-write: modify the application so it explicitly writes every change to both databases at once. The other is CDC: infrastructure watches the source database's transaction log and mirrors changes automatically, with no application changes needed. <b>We use CDC</b> — it avoids touching application write logic and the risk of two writes disagreeing mid-transaction.</li>
+        <li><b>Continuous reconciliation</b> — an automated job compares record counts and checksums between both systems and alerts on any drift, rather than relying on a one-time check.</li>
+        <li><b>Rollback path</b> — after cutover, the same CDC mechanism runs in reverse: it watches the new database's transaction log and mirrors changes back to the old one, so writes can be pointed back at the old database with zero data loss if something's wrong within the rollback window.</li>
+      </ul>
+    </div>
+
+    <div class="callout tech">
+      <span class="tag"></span>
+      <span class="label">Technical decision</span>
+      <p>Sync engine: SQL Server's native Change Data Capture / Change Tracking is the lowest-friction starting point since we're already on SQL Server; a tool like Debezium is the fallback if we need finer control.</p>
+    </div>
+    <div class="callout tech">
+      <span class="tag"></span>
+      <span class="label">Technical decision</span>
+      <p>Why freeze is still needed even with CDC and reconciliation running: CDC always has a small amount of replication lag — a fraction of a second to a few seconds. A freeze is a short, planned pause that lets that lag drain to zero before writes are pointed at the new database, closing the one window where a write could otherwise be lost.</p>
+    </div>
+    <div class="callout biz">
+      <span class="tag"></span>
+      <span class="label">Business decision</span>
+      <p>Define an acceptable freeze window for the final, highest-risk cutover (Projects &amp; Jobs) — e.g. end-of-day Friday rather than mid-week — and agree on how far in advance sales reps and PMs are told their module is changing underneath them.</p>
+    </div>
+    <div class="callout risk">
+      <span class="tag"></span>
+      <span class="label">Non-negotiable</span>
+      <p>No module is considered "cut over" until the reconciliation job has run clean for an agreed validation window. Calendar time here is the honest cost of doing this safely — it is not something to compress to hit an arbitrary date.</p>
+    </div>
+
+    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-02</span><span>MIGRATION STRATEGY</span></div>
+  </section>
+
+  <!-- ===================== SHEET 3 — API LAYER ===================== -->
+  <section class="sheet" id="t3">
+    <div class="sheet-num">SHEET S-03 / 05</div>
+    <h2>API Layer</h2>
+    <p class="sheet-sub">The piece that doesn't exist today — a single, governed front door to the data that every future front end, integration, and AI feature builds on.</p>
+
+    <div class="section">
+      <h3>Why this layer is missing today — and why it matters</h3>
+      <p>The current front end talks directly to the database. Every business rule is scattered across app code, stored procedures, and triggers — which is a large part of why four years of vendor work got stuck: any change to the front end risks the database, and vice versa.</p>
+      <div class="diagram">
+        <div class="dbox">Web Front End</div>
+        <div class="dbox">Future Apps</div>
+        <div class="dbox amber">AI Agent</div>
+      </div>
+      <div class="diagram vertical" style="margin-top:-16px;">
+        <div class="darrow">&#8594;</div>
+        <div class="dbox accent" style="max-width:280px;">API Layer<br><small>business rules enforced once, here</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox">New Database</div>
+      </div>
+      <div class="diagram-caption">Every consumer — human or AI — goes through the same governed endpoints</div>
+    </div>
+
+    <div class="section">
+      <h3>Example endpoints</h3>
+      <table class="rolltable">
+        <tr><th>Endpoint</th><th>Purpose</th></tr>
+        <tr><td class="step">/projects</td><td>Create, read, update project &amp; building specs</td></tr>
+        <tr><td class="step">/projects/{id}/convert-to-job</td><td>The Project→Job transition as one governed action — not a raw flag flip</td></tr>
+        <tr><td class="step">/contacts</td><td>Manage people &amp; their company/role associations</td></tr>
+        <tr><td class="step">/activities</td><td>Log calls, meetings, sample requests</td></tr>
+        <tr><td class="step">/expenses</td><td>Log &amp; categorize expenses tied to an activity</td></tr>
+      </table>
+    </div>
+
+    <div class="callout tech">
+      <span class="tag"></span>
+      <span class="label">Technical decision</span>
+      <p>REST is the default recommendation — simpler to build, test, and reason about for this scope than GraphQL. Framework (e.g. Django REST Framework or Node/Express) should match whatever language the front end and migration scripts are already written in, to minimize context-switching for a small team.</p>
+    </div>
+    <div class="callout biz">
+      <span class="tag"></span>
+      <span class="label">Business decision</span>
+      <p>Decide what genuinely needs real-time behavior (activity logging, project status changes) versus what can run as a scheduled batch (leadership reporting exports) — this materially changes infrastructure cost and complexity.</p>
+    </div>
+    <div class="callout tech">
+      <span class="tag"></span>
+      <span class="label">Why this unlocks the AI ask</span>
+      <p>An AI agent should never query raw production SQL. Once it calls the same governed endpoints as the front end, "find similar past jobs" or "log this expense" becomes a safe, well-defined action instead of an open-ended risk.</p>
+    </div>
+
+    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-03</span><span>API LAYER</span></div>
+  </section>
+
+  <!-- ===================== SHEET 4 — FRONT END & AI ===================== -->
+  <section class="sheet" id="t4">
+    <div class="sheet-num">SHEET S-04 / 05</div>
+    <h2>Front End &amp; AI</h2>
+    <p class="sheet-sub">By this point the hard problems — data integrity, live migration — are solved. The remaining risk is adoption, not architecture.</p>
+
+    <div class="section">
+      <h3>Principle: replicate first, innovate second</h3>
+      <p>The new interface should feel recognizable on day one — same information, same flow — even though the technology underneath is completely different. Redesigning the workflow and the technology at the same time is a common way modernization projects lose user trust.</p>
+      <div class="diagram">
+        <div class="dbox amber">Legacy Front End<br><small>remaining un-migrated modules</small></div>
+        <div class="darrow">&#8596;</div>
+        <div class="dbox accent">New Front End<br><small>migrated modules, built on the API</small></div>
+      </div>
+      <div class="diagram-caption">Both interfaces coexist during the transition, matching the module rollout order from S-02</div>
+    </div>
+
+    <div class="section">
+      <h3>Where AI adds real value — introduced additively</h3>
+      <ul>
+        <li><b>Natural-language project search</b> — "show me projects with GC Turner from last year," translated into the same API calls a person's filters would make.</li>
+        <li><b>Smart flags</b> — surface contacts with no logged activity in 60+ days, or projects stalled at a status for an unusual length of time.</li>
+        <li><b>Expense auto-categorization</b> — suggest a category from the description, person still confirms.</li>
+      </ul>
+      <p>Each of these ships as an optional addition next to the existing way of doing things, not a replacement — adoption is earned, not assumed.</p>
+    </div>
+
+    <div class="callout tech">
+      <span class="tag"></span>
+      <span class="label">Technical decision</span>
+      <p>Front-end framework choice follows the API/backend decision from S-03 for stack consistency. A modern component framework (e.g. React) is recommended for the UI itself given the responsiveness expected of a daily-use tool.</p>
+    </div>
+    <div class="callout biz">
+      <span class="tag"></span>
+      <span class="label">Business decision</span>
+      <p>Per-module training sessions for sales, PM, and back-office staff, timed to each cutover — plus a named point of contact for support during each module's first few live weeks, when trust in the new system is won or lost.</p>
+    </div>
+    <div class="callout risk">
+      <span class="tag"></span>
+      <span class="label">Freeze window</span>
+      <p>The final, highest-stakes front-end cutover (Projects &amp; Jobs) is scheduled during the same low-activity freeze window as its data migration counterpart in S-02 — front end and data risk are retired together, not separately.</p>
+    </div>
+
+    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-04</span><span>FRONT END &amp; AI</span></div>
+  </section>
+
+  <!-- ===================== SHEET 5 — THE BOTTOM LINE ===================== -->
+  <section class="sheet" id="t5">
+    <div class="sheet-num">SHEET S-05 / 05</div>
+    <h2>The Bottom Line</h2>
+    <p class="sheet-sub">Same plan, no jargon — for anyone in the room who wasn't tracking the acronyms on sheets 1 through 4.</p>
+
+    <div class="section">
+      <h3>What we're actually doing</h3>
+      <p>We're replacing the guts of the CRM without turning it off. First we fix how the data is organized, so it isn't fighting itself anymore. Then we build a clean, controlled way for anything — the website you use every day, or an AI assistant later — to safely read and update that data. Last, we rebuild the screens people actually look at, matching how you already work before we change anything about it.</p>
+    </div>
+
+    <div class="section">
+      <h3>The four steps, in order</h3>
+      <div class="diagram">
+        <div class="dbox accent">1. Fix the data<br><small>organize it properly</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox accent">2. Move it safely<br><small>no downtime, no data loss</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox accent">3. Build the connector<br><small>a controlled way in and out</small></div>
+        <div class="darrow">&#8594;</div>
+        <div class="dbox amber">4. New screens<br><small>familiar first, better after</small></div>
+      </div>
+      <div class="diagram-caption">each step only starts once the one before it is proven to work</div>
+    </div>
+
+    <div class="section">
+      <h3>What stays the same for you, day to day</h3>
+      <ul>
+        <li>The system keeps working the whole time — nothing goes offline for this to happen</li>
+        <li>Your workflow looks and feels familiar at first, even though the technology underneath is new</li>
+        <li>You get training and a real person to ask, timed to whenever your part of the system actually changes</li>
+        <li>Nothing about how you log a call, a project, or an expense changes until you've been shown the new way</li>
+      </ul>
+    </div>
+
+    <div class="callout final">
+      <span class="tag"></span>
+      <p>Nothing breaks. Nothing disappears. It just gets easier to use — and ready for what's next, including the AI assistant we talked about.</p>
+    </div>
+
+    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-05</span><span>THE BOTTOM LINE</span></div>
+  </section>
+
+  <footer class="page-footer">END OF SET — S-01 THROUGH S-05 — PREPARED FOR REVIEW</footer>
+    </div>
+  </div>
+</div>
+
+<script>
+  const buttons = document.querySelectorAll('.tab-btn');
+  const sheets = document.querySelectorAll('.sheet');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      sheets.forEach(s => s.classList.remove('active'));
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected','true');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+  });
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>
