@@ -936,7 +936,7 @@
       <div class="section">
         <h3>Why a 2-socket rackmount server, not a basic tower</h3>
         <p>A single-socket tower server (like a Lenovo ThinkSystem ST250 V3) would comfortably handle the CRM database alone. But the plan now includes Python-based pattern analysis (AI-03, AI-05) running on top of live CRM traffic, a standby server, more concurrent users over time, and modules or features not yet defined. A tower server's RAM ceiling — 128GB — is a real limit if any of that grows. Stepping up to a 2-socket rackmount server now means RAM can simply be added later without replacing the machine.</p>
-        <p>Spec: Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128–192GB RAM installed (expandable to 256GB or more), RAID-10 SSD storage around 4TB usable.</p>
+        <p>Spec: Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128GB RAM installed as the starting point (expandable to 256GB or more without replacing the machine), RAID-10 SSD storage at 8TB usable — doubled from an initial 4TB plan, leaving real room for a possible future document/drawing archive at a modest added cost.</p>
       </div>
 
       <div class="section">
@@ -966,8 +966,8 @@
 
       <table class="rolltable">
         <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Core server</td><td>Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128–192GB RAM, RAID-10 SSD</td><td>One-time</td><td>$7,000 – $12,000</td></tr>
-        <tr><td class="step">Standby server (HA)</td><td>Same class as core server, kept in sync via SQL Server Always On</td><td>One-time</td><td>$7,000 – $12,000</td></tr>
+        <tr><td class="step">Core server</td><td>Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128GB RAM, RAID-10 SSD (8TB usable)</td><td>One-time</td><td>$8,200 – $14,000</td></tr>
+        <tr><td class="step">Standby server (HA)</td><td>Same class as core server, kept in sync via SQL Server Always On</td><td>One-time</td><td>$8,200 – $14,000</td></tr>
         <tr><td class="step">Staging/test server</td><td>Lower-spec tower server, or a VM on the core server</td><td>One-time</td><td>$0 – $2,500</td></tr>
         <tr><td class="step">SQL Server Standard — primary</td><td>Server + CAL licensing, ~20–40 named users</td><td>One-time</td><td>$5,000 – $10,500</td></tr>
         <tr><td class="step">SQL Server Standard — standby</td><td>Server + CAL licensing</td><td>One-time</td><td>$5,000 – $10,500</td></tr>
@@ -977,7 +977,7 @@
         <tr><td class="step">Server rack enclosure</td><td>12U–24U rack cabinet</td><td>One-time</td><td>$300 – $800</td></tr>
         <tr><td class="step">Hardware support contract</td><td>Dell ProSupport / Lenovo Premier Support, core + standby</td><td>Recurring — yearly</td><td>$1,400 – $3,600</td></tr>
       </table>
-      <p><b>Subtotal, this sheet:</b> roughly $26,700 – $54,300 one-time (or $24,300 – $48,300 if hosting on Linux instead of Windows Server), plus $1,400 – $3,600/year for hardware support.</p>
+      <p><b>Subtotal, this sheet:</b> roughly $29,100 – $58,300 one-time (or $26,700 – $52,300 if hosting on Linux instead of Windows Server), plus $1,400 – $3,600/year for hardware support.</p>
 
       <div class="callout tech">
         <span class="tag"></span>
@@ -994,6 +994,10 @@
       <div class="callout risk">
         <span class="tag"></span>
         <p>Microsoft offers a licensing benefit that can waive the cost of a passive failover server entirely under certain Software Assurance terms — potentially reducing the standby license cost in the table above. This needs confirming with a licensing reseller before counting on it; the table above assumes it does not apply, as the safer planning number.</p>
+      </div>
+      <div class="callout risk">
+        <span class="tag"></span>
+        <p>The Windows Server figure above assumes a 16-core license covers the server. Windows Server licenses every physical core, so if the final CPU configuration has more than 16 total cores, additional core packs are needed — this number is a starting point, not a ceiling, until the exact CPU is chosen.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-01</span><span>CORE &amp; STAGING</span></div>
@@ -1035,7 +1039,7 @@
         <tr><td class="step">IT maintenance (if outsourced)</td><td>Local IT contractor / MSP retainer</td><td>Recurring — monthly</td><td>$0 – $600</td></tr>
       </table>
       <p><b>Subtotal, this sheet:</b> roughly $2,100 – $3,700 one-time, plus $70 – $260/month recurring before an outsourced IT retainer (up to $860/month if fully outsourced).</p>
-      <p><b>Combined total across INF-01 and INF-02:</b> roughly $28,800 – $58,000 one-time (or $26,400 – $52,000 if hosting on Linux instead of Windows Server), plus $70 – $260/month recurring before an outsourced IT retainer (up to $860/month if fully outsourced), plus $1,400 – $3,600/year for hardware support and $150 – $300/year for the firewall subscription.</p>
+      <p><b>Combined total across INF-01 and INF-02:</b> roughly $31,200 – $62,000 one-time (or $28,800 – $56,000 if hosting on Linux instead of Windows Server), plus $70 – $260/month recurring before an outsourced IT retainer (up to $860/month if fully outsourced), plus $1,400 – $3,600/year for hardware support and $150 – $300/year for the firewall subscription.</p>
 
       <div class="callout tech">
         <span class="tag"></span>
