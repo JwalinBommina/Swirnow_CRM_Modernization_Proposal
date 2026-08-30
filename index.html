@@ -381,6 +381,36 @@
     text-transform:uppercase;
   }
 
+  /* ---------- Top-level group switcher ---------- */
+  .group-tabs{
+    display:flex;
+    gap:12px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .group-tab{
+    flex:1 1 220px;
+    background:var(--kraft-rail);
+    border:2.5px solid var(--ink);
+    color:var(--ink-soft);
+    font-family:'Oswald', sans-serif;
+    font-weight:600;
+    font-size:15px;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+    padding:14px 18px;
+    cursor:pointer;
+    text-align:left;
+    transition:background 0.15s, color 0.15s;
+  }
+  .group-tab small{display:block;font-family:'IBM Plex Mono',monospace;font-weight:400;font-size:10.5px;letter-spacing:0.3px;text-transform:none;color:var(--ink-soft);margin-top:3px;}
+  .group-tab:hover{background:var(--tag-light);}
+  .group-tab.active{background:var(--orange);color:var(--tag-light);border-color:var(--ink);}
+  .group-tab.active small{color:var(--tag-light);opacity:0.85;}
+  .group-tab:focus-visible{outline:2px solid var(--steel);outline-offset:2px;}
+  .group-panel{display:none;}
+  .group-panel.active{display:block;}
+
   @media (max-width:760px){
     .sheet-index{
       padding:8px 4px 0;
@@ -407,6 +437,12 @@
     </div>
   </div>
 
+  <div class="group-tabs" role="tablist" aria-label="Proposal sections">
+    <button class="group-tab active" data-group="migration">CRM Modernization<small>Database, migration, API, front end</small></button>
+    <button class="group-tab" data-group="ai">AI Opportunities<small>What 50 years of data can do for you</small></button>
+  </div>
+
+  <div class="group-panel active" id="group-migration">
   <div class="layout">
     <div class="sheet-index" role="tablist" aria-label="Proposal sections">
     <button class="tab-btn active" data-tab="t1" role="tab" aria-selected="true"><span class="num">S-01</span><span class="label">Database Structure</span></button>
@@ -677,15 +713,178 @@
   <footer class="page-footer">END OF SET — S-01 THROUGH S-05 — PREPARED FOR REVIEW</footer>
     </div>
   </div>
+  </div>
+
+  <div class="group-panel" id="group-ai">
+  <div class="layout">
+    <div class="sheet-index" role="tablist" aria-label="AI opportunity sections">
+      <button class="tab-btn active" data-tab="ai1" role="tab" aria-selected="true"><span class="num">AI-01</span><span class="label">Similar Projects</span></button>
+      <button class="tab-btn" data-tab="ai2" role="tab" aria-selected="false"><span class="num">AI-02</span><span class="label">Pricing Benchmark</span></button>
+      <button class="tab-btn" data-tab="ai3" role="tab" aria-selected="false"><span class="num">AI-03</span><span class="label">Win / Loss Patterns</span></button>
+      <button class="tab-btn" data-tab="ai4" role="tab" aria-selected="false"><span class="num">AI-04</span><span class="label">Relationship Intel</span></button>
+      <button class="tab-btn" data-tab="ai5" role="tab" aria-selected="false"><span class="num">AI-05</span><span class="label">Stage-Duration Flags</span></button>
+    </div>
+
+    <div class="sheets">
+
+    <!-- ===================== AI-01 — SIMILAR PROJECTS ===================== -->
+    <section class="sheet active" id="ai1">
+      <div class="sheet-num">SHEET AI-01 / 05</div>
+      <h2>Similar-Project Lookup</h2>
+      <p class="sheet-sub">Fifty years of past projects become an instant reference for a new estimate — instead of relying on someone remembering "didn't we do something like this in 2019?"</p>
+
+      <div class="section">
+        <h3>What it does</h3>
+        <p>An estimator building a new quote asks, in plain language, for past projects with similar structural specs — load type, joist depth, building size, system level. Instead of digging through memory or old files, they get a ranked list of genuinely comparable past jobs pulled straight from the database.</p>
+      </div>
+
+      <div class="section">
+        <h3>How it works</h3>
+        <div class="diagram">
+          <div class="dbox">Estimator's request<br><small>"find similar past jobs"</small></div>
+          <div class="darrow">&#8594;</div>
+          <div class="dbox amber">AI agent<br><small>translates to filters</small></div>
+          <div class="darrow">&#8594;</div>
+          <div class="dbox accent">API layer<br><small>/projects?similar=...</small></div>
+          <div class="darrow">&#8594;</div>
+          <div class="dbox">Ranked matches</div>
+        </div>
+        <div class="diagram-caption">the AI never touches raw SQL — same governed endpoint the front end uses, per S-03</div>
+      </div>
+
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>This only works reliably once the repeating load-type columns are normalized (S-01). Matching against three hard-capped columns per project is unreliable; a proper <code>ProjectLoads</code> child table makes structured similarity search straightforward instead of guesswork.</p>
+      </div>
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Confirm with estimators which specs actually drive "similarity" in practice — is it load type and building size, or does square footage or region matter more? What looks similar on paper isn't always functionally comparable.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-01</span><span>SIMILAR PROJECTS</span></div>
+    </section>
+
+    <!-- ===================== AI-02 — PRICING BENCHMARK ===================== -->
+    <section class="sheet" id="ai2">
+      <div class="sheet-num">SHEET AI-02 / 05</div>
+      <h2>Pricing Benchmark</h2>
+      <p class="sheet-sub">Turn decades of contract history into a sanity check for new estimates — surfacing what similar projects actually priced at.</p>
+
+      <div class="section">
+        <h3>What it does</h3>
+        <p>Builds directly on AI-01's similarity matching, then compares contract value and contract square footage across those matches to show a typical price range for a new quote with similar specs.</p>
+        <ul>
+          <li>A new estimate can be shown alongside "similar past jobs priced between $X and $Y"</li>
+          <li>Outlier quotes — unusually high or low versus historical norms — can be flagged for a second look before they go out the door</li>
+        </ul>
+      </div>
+
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Pricing judgment currently lives with a few experienced estimators. Decide whether this surfaces guidance passively (a reference range shown alongside a new quote) or actively warns when something falls outside the typical band — the second is more useful but needs buy-in from the estimating team to avoid feeling like second-guessing.</p>
+      </div>
+      <div class="callout risk">
+        <span class="tag"></span>
+        <p>Historical pricing reflects historical material and labor costs. A straight comparison of a 2026 quote to a 2006 project without adjusting for cost inflation would be misleading — this needs a normalization step, not a raw historical average.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-02</span><span>PRICING BENCHMARK</span></div>
+    </section>
+
+    <!-- ===================== AI-03 — WIN / LOSS PATTERNS ===================== -->
+    <section class="sheet" id="ai3">
+      <div class="sheet-num">SHEET AI-03 / 05</div>
+      <h2>Win / Loss Patterns</h2>
+      <p class="sheet-sub">Twenty-plus years of "why we lost it" and "why it became a job" answers, turned into real strategic signal instead of sitting unused in the database.</p>
+
+      <div class="section">
+        <h3>What it does</h3>
+        <p>The schema already captures structured reasons for both outcomes — why a deal went dead, and why a project converted to a job. Nobody's likely ever analyzed decades of that data for patterns at once. Surfacing things like "projects with this load type in this region lose to competitors more often" or "deals stall most often at the proposal stage with certain GCs" turns existing fields into strategic insight.</p>
+      </div>
+
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>Depends on whether the underlying reason fields are a fixed, structured list of options or free text. Structured answers make this a straightforward analytics query; free text would need real text-mining work first — worth confirming which it is before scoping this as a quick build.</p>
+      </div>
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Decide who this is for — a leadership-level trend report reviewed quarterly, or a live signal surfaced to sales reps while they're actively working a deal. Same underlying data, very different feature depending on the audience.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-03</span><span>WIN / LOSS PATTERNS</span></div>
+    </section>
+
+    <!-- ===================== AI-04 — RELATIONSHIP INTEL ===================== -->
+    <section class="sheet" id="ai4">
+      <div class="sheet-num">SHEET AI-04 / 05</div>
+      <h2>Relationship Intelligence</h2>
+      <p class="sheet-sub">Spot cross-sell opportunities and quiet accounts by connecting contact, company, and activity history — not just flagging inactivity.</p>
+
+      <div class="section">
+        <h3>What it does</h3>
+        <ul>
+          <li>A GC that's repeatedly ordered Hambro floor systems but never Avenere cladding — a natural cross-sell signal nobody has to remember to look for</li>
+          <li>A previously high-volume account that's gone quiet compared to its own historical pattern, not just a flat "no activity in 60 days" rule</li>
+          <li>Builds on the simpler activity-based flags already planned for the front end (S-04), using company and contact history together rather than one table in isolation</li>
+        </ul>
+      </div>
+
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Decide who sees these flags — individual sales reps for their own accounts, or leadership for a portfolio-wide view. Both are useful, but they're different features with different access and framing.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-04</span><span>RELATIONSHIP INTEL</span></div>
+    </section>
+
+    <!-- ===================== AI-05 — STAGE-DURATION FLAGS ===================== -->
+    <section class="sheet" id="ai5">
+      <div class="sheet-num">SHEET AI-05 / 05</div>
+      <h2>Stage-Duration Risk Flags</h2>
+      <p class="sheet-sub">Warn when a project has been sitting in a pipeline stage longer than similar past projects usually take — before a PM notices a deal has quietly stalled.</p>
+
+      <div class="section">
+        <h3>What it does</h3>
+        <p>Once enough stage-history data exists, a project sitting in "Proposal" for 45 days when similar past projects usually moved on within 20 gets flagged automatically. The same logic can work at the customer level — if a specific GC has a track record of dragging out a particular stage, new projects tied to them can be flagged earlier.</p>
+      </div>
+
+      <div class="callout risk">
+        <span class="tag"></span>
+        <p>This directly depends on the lifecycle-history limitation flagged in S-01: the old system never captured stage-transition timestamps, only current state. This feature can't analyze 50 years of stage-duration history on day one — it starts generating real timing data the moment the new <code>ProjectLifecycleStatus</code> table goes live, and gets meaningfully more accurate every month after that. A rougher signal may be recoverable from existing Activity timestamps, but that needs confirming with Yvette rather than assuming it's available.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-05</span><span>STAGE-DURATION FLAGS</span></div>
+    </section>
+
+    </div>
+  </div>
+  </div>
+
 </div>
 
 <script>
+  // Group-level switcher (CRM Modernization vs AI Opportunities)
+  const groupTabs = document.querySelectorAll('.group-tab');
+  const groupPanels = document.querySelectorAll('.group-panel');
+  groupTabs.forEach(gt => {
+    gt.addEventListener('click', () => {
+      groupTabs.forEach(g => g.classList.remove('active'));
+      groupPanels.forEach(p => p.classList.remove('active'));
+      gt.classList.add('active');
+      document.getElementById('group-' + gt.dataset.group).classList.add('active');
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+  });
+
+  // Sub-tab switcher, scoped within each group so switching one group doesn't clear the other's state
   const buttons = document.querySelectorAll('.tab-btn');
-  const sheets = document.querySelectorAll('.sheet');
   buttons.forEach(btn => {
     btn.addEventListener('click', () => {
-      buttons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-      sheets.forEach(s => s.classList.remove('active'));
+      const panel = btn.closest('.group-panel');
+      const scopedButtons = panel.querySelectorAll('.tab-btn');
+      const scopedSheets = panel.querySelectorAll('.sheet');
+      scopedButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      scopedSheets.forEach(s => s.classList.remove('active'));
       btn.classList.add('active');
       btn.setAttribute('aria-selected','true');
       document.getElementById(btn.dataset.tab).classList.add('active');
