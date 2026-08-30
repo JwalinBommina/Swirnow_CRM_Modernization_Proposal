@@ -428,6 +428,7 @@
     cursor:default;
   }
   .group-tab.ai-tab.active{background:var(--green);}
+  .group-tab.infra-tab.active{background:var(--steel);}
   .group-tab.active::before{content:"NOW VIEWING";color:var(--tag-light);opacity:0.85;}
   .group-tab.active:hover{transform:translate(5px,5px);box-shadow:0 0 0 var(--ink);}
   .group-tab.active small{color:var(--tag-light);opacity:0.9;}
@@ -496,7 +497,7 @@
     <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — and a look at what two decades of Swirnow's own project data can do once it does, without interrupting daily use by sales, project management, and back-office teams.</p>
     <div class="meta-row">
       <span><b>Project</b> &nbsp;Swirnow Building Systems — CRM Platform</span>
-      <span><b>Sheets</b> &nbsp;11 across 2 sections</span>
+      <span><b>Sheets</b> &nbsp;14 across 3 sections</span>
       <span><b>Status</b> &nbsp;Proposal for review</span>
     </div>
   </div>
@@ -504,6 +505,7 @@
   <div class="group-tabs" role="tablist" aria-label="Proposal sections">
     <button class="group-tab active" data-group="migration">CRM Modernization</button>
     <button class="group-tab ai-tab" data-group="ai">AI Opportunities</button>
+    <button class="group-tab infra-tab" data-group="infra">Infrastructure</button>
   </div>
 
   <div class="group-panel active" id="group-migration">
@@ -514,13 +516,12 @@
     <button class="tab-btn" data-tab="t3" role="tab" aria-selected="false"><span class="num">S-03</span><span class="label">API Layer</span></button>
     <button class="tab-btn" data-tab="t4" role="tab" aria-selected="false"><span class="num">S-04</span><span class="label">Front End &amp; AI</span></button>
     <button class="tab-btn" data-tab="t5" role="tab" aria-selected="false"><span class="num">S-05</span><span class="label">The Bottom Line</span></button>
-    <button class="tab-btn" data-tab="t6" role="tab" aria-selected="false"><span class="num">S-06</span><span class="label">Infrastructure</span></button>
   </div>
 
     <div class="sheets">
 <!-- ===================== SHEET 1 — DATABASE STRUCTURE ===================== -->
   <section class="sheet active" id="t1">
-    <div class="sheet-num">SHEET S-01 / 06</div>
+    <div class="sheet-num">SHEET S-01 / 05</div>
     <h2>Database Structure</h2>
     <p class="sheet-sub">What the current schema tells us about how the business evolved, and how the redesign fixes it without losing what already works.</p>
 
@@ -576,7 +577,7 @@
 
   <!-- ===================== SHEET 2 — MIGRATION STRATEGY ===================== -->
   <section class="sheet" id="t2">
-    <div class="sheet-num">SHEET S-02 / 06</div>
+    <div class="sheet-num">SHEET S-02 / 05</div>
     <h2>Migration Strategy</h2>
     <p class="sheet-sub">The system is used every day. The plan keeps it fully operational throughout, and lets us prove the new platform works before anyone's workflow depends on it.</p>
 
@@ -634,7 +635,7 @@
 
   <!-- ===================== SHEET 3 — API LAYER ===================== -->
   <section class="sheet" id="t3">
-    <div class="sheet-num">SHEET S-03 / 06</div>
+    <div class="sheet-num">SHEET S-03 / 05</div>
     <h2>API Layer</h2>
     <p class="sheet-sub">The piece that doesn't exist today — a single, governed front door to the data that every future front end, integration, and AI feature builds on.</p>
 
@@ -688,7 +689,7 @@
 
   <!-- ===================== SHEET 4 — FRONT END & AI ===================== -->
   <section class="sheet" id="t4">
-    <div class="sheet-num">SHEET S-04 / 06</div>
+    <div class="sheet-num">SHEET S-04 / 05</div>
     <h2>Front End &amp; AI</h2>
     <p class="sheet-sub">By this point the hard problems — data integrity, live migration — are solved. The remaining risk is adoption, not architecture.</p>
 
@@ -734,7 +735,7 @@
 
   <!-- ===================== SHEET 5 — THE BOTTOM LINE ===================== -->
   <section class="sheet" id="t5">
-    <div class="sheet-num">SHEET S-05 / 06</div>
+    <div class="sheet-num">SHEET S-05 / 05</div>
     <h2>The Bottom Line</h2>
     <p class="sheet-sub">Same plan, no jargon — for anyone in the room who wasn't tracking the acronyms on sheets 1 through 4.</p>
 
@@ -775,85 +776,7 @@
     <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-05</span><span>THE BOTTOM LINE</span></div>
   </section>
 
-  <!-- ===================== SHEET 6 — INFRASTRUCTURE & REQUIREMENTS ===================== -->
-  <section class="sheet" id="t6">
-    <div class="sheet-num">SHEET S-06 / 06</div>
-    <h2>Infrastructure &amp; Requirements</h2>
-    <p class="sheet-sub">Fully on-premises — no cloud dependency for the database or application. Real hardware, sized for a company like Swirnow, with the trade-offs that come with owning it directly instead of renting it.</p>
-
-    <div class="section">
-      <h3>The core server</h3>
-      <p>One physical server, housed on-site, runs the database, the API layer, and the internal web server for the front end. Sized for a small-business CRM workload — this isn't a large enterprise dataset — a mainstream tower or small rack server fits well: something in the class of a Lenovo ThinkSystem ST250 V3 or Dell PowerEdge T-series, with roughly 32–64GB of RAM and RAID-10 SSD storage (around 2TB usable) for redundancy against a single drive failure. Rough new-hardware cost: <b>$4,000–$7,000</b>, though an exact number needs a vendor quote once specs are finalized.</p>
-    </div>
-
-    <div class="section">
-      <h3>A second, smaller box for staging</h3>
-      <p>Same need as before, just on-premises now: a smaller test environment to safely validate each module's migration scripts (per the freeze process in S-02) before anything touches real, live data. This can be a lower-spec second server, or a virtual machine running on the same physical box if budget is tight — either works.</p>
-    </div>
-
-    <div class="section">
-      <h3>Backup and power protection — now Swirnow's job, not a vendor's</h3>
-      <p>A cloud provider handles this invisibly. On-premises, it has to be built deliberately:</p>
-      <ul>
-        <li><b>A UPS (battery backup)</b> to protect against power outages corrupting data mid-write</li>
-        <li><b>RAID storage</b> (already factored into the server spec above) so one failed drive doesn't mean lost data</li>
-        <li><b>A real backup routine with an offsite copy</b> — even fully on-premises, at least one backup copy needs to live somewhere other than the building itself (a rotated external drive, or a low-cost backup service used purely for disaster recovery, not daily operation)</li>
-      </ul>
-    </div>
-
-    <div class="section">
-      <h3>Remote access for the team</h3>
-      <p>Sales reps working in the field need to reach the CRM from outside the building. On-premises, that means setting up a secure VPN into the internal network — an extra piece of setup a cloud-hosted system would have handled automatically.</p>
-    </div>
-
-    <div class="section">
-      <h3>AI features — the one honest exception</h3>
-      <p>Running a language model powerful enough for natural-language search entirely in-house would need serious, specialized GPU hardware — realistically tens of thousands of dollars, disproportionate to a company this size, and still likely lower quality than hosted options. The practical approach: the database and application stay fully on-premises, but AI feature requests go out over the internet to a pay-per-use hosted AI provider — the CRM data itself never has to leave the building, only the specific request being asked.</p>
-    </div>
-
-    <div class="section">
-      <h3>What the team actually needs day to day</h3>
-      <p>A standard, modern development laptop — nothing specialized. Someone needs ongoing responsibility for the physical server: applying updates, monitoring for hardware issues, and responding if something fails.</p>
-    </div>
-
-    <div class="section">
-      <h3>The full cost breakdown</h3>
-      <table class="rolltable">
-        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Core server</td><td>Lenovo ThinkSystem ST250 V3 or Dell PowerEdge T350, ~64GB RAM, RAID-10 SSD</td><td>One-time</td><td>$3,500 – $6,500</td></tr>
-        <tr><td class="step">Staging/test server</td><td>Lower-spec ST250 V3, or a VM on the core server</td><td>One-time</td><td>$0 – $2,500</td></tr>
-        <tr><td class="step">UPS (battery backup)</td><td>APC Smart-UPS 1500VA (SMT1500C-class)</td><td>One-time</td><td>$400 – $700</td></tr>
-        <tr><td class="step">VPN / firewall appliance</td><td>Ubiquiti UniFi Dream Machine Pro, or Fortinet FortiGate 60F</td><td>One-time</td><td>$300 – $600</td></tr>
-        <tr><td class="step">Firewall security subscription</td><td>Vendor threat-protection subscription</td><td>Recurring — yearly</td><td>$150 – $300</td></tr>
-        <tr><td class="step">Offsite backup service</td><td>Backblaze Business Backup, or B2 cloud storage</td><td>Recurring — monthly</td><td>$20 – $60</td></tr>
-        <tr><td class="step">AI feature usage</td><td>Hosted AI API, pay-per-use</td><td>Recurring — monthly</td><td>$50 – $200</td></tr>
-        <tr><td class="step">IT maintenance (if outsourced)</td><td>Local IT contractor / MSP retainer</td><td>Recurring — monthly</td><td>$0 – $500</td></tr>
-      </table>
-      <p><b>One-time hardware total:</b> roughly $4,200 – $10,300, depending on final server specs and whether staging runs on separate hardware or a VM.<br><b>Recurring monthly total:</b> roughly $70 – $260/month before any outsourced IT retainer (plus the firewall subscription, billed yearly), or up to $760/month if IT support is fully outsourced rather than handled by the in-house technical hire.</p>
-    </div>
-
-    <div class="callout tech">
-      <span class="tag"></span>
-      <p>UPS runtime, specifically: a 1500VA APC Smart-UPS doesn't keep the server running indefinitely — it's built to bridge a brief outage and allow a clean shutdown, not survive an extended blackout. At the power draw a single small server actually uses (roughly 150–300W, well under the UPS's full 1000W capacity), real-world runtime lands around 30–90 minutes — enough time to either ride out a short outage or shut down safely, not a substitute for a generator if outages in the area tend to run long.</p>
-    </div>
-
-    <div class="callout tech">
-      <span class="tag"></span>
-      <p>Cost shape is different from cloud: mostly a one-time hardware purchase rather than an ongoing monthly bill. Ongoing costs after the initial buildout are mainly electricity, internet, backup service, AI API usage, and an eventual hardware refresh in about 5 years — not a recurring hosting fee. All figures above are planning ranges based on current market pricing, not vendor quotes — final numbers should be confirmed once exact specs and providers are chosen.</p>
-    </div>
-    <div class="callout biz">
-      <span class="tag"></span>
-      <p>Decide who owns ongoing IT maintenance — patching, monitoring, responding to hardware failures. With no cloud provider's SLA behind it, this responsibility sits entirely with Swirnow, whether that's the same technical hire or a separate IT contractor.</p>
-    </div>
-    <div class="callout risk">
-      <span class="tag"></span>
-      <p>No cloud provider means no automatic disaster recovery. If the building has a fire, flood, or theft, cloud-hosted data would survive automatically — on-premises data only survives if the offsite backup plan above is actually in place and tested, not just set up once and forgotten.</p>
-    </div>
-
-    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-06</span><span>INFRASTRUCTURE</span></div>
-  </section>
-
-  <footer class="page-footer">END OF SECTION — S-01 THROUGH S-06</footer>
+  <footer class="page-footer">END OF SECTION — S-01 THROUGH S-05</footer>
     </div>
   </div>
   </div>
@@ -928,6 +851,10 @@
         <span class="tag"></span>
         <p>This can work two ways — a quarterly trend report for leadership, or a live nudge for sales reps while they're still working a deal. Worth deciding which matters more first.</p>
       </div>
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>The pattern-finding itself is standard database analysis, not AI — grouping and comparing reasons across every project, run directly on Swirnow's own server. AI only gets used at the very end, to turn the finding into a plain-language summary, or to help read reasons that were written as free text instead of picked from a fixed list.</p>
+      </div>
 
       <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-03</span><span>WIN / LOSS PATTERNS</span></div>
     </section>
@@ -974,6 +901,10 @@
         <span class="tag"></span>
         <p>This gets sharper the more history is available. It works best for repeat clients with a real track record — for a brand-new client, there's nothing to learn from yet, so this feature naturally improves as the new system captures more history over time.</p>
       </div>
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>Same mechanism as AI-03: comparing a client's stage timing against the norm is standard database analysis — a Python script for the more involved cross-referencing (client, stage, project type at once) — running on Swirnow's own server. AI only turns the finding into the plain-language heads-up the PM actually sees.</p>
+      </div>
 
       <div class="sheet-footer"><span>SWIRNOW — AI OPPORTUNITIES</span><span>SHEET AI-05</span><span>CLIENT SLOW SPOTS</span></div>
     </section>
@@ -981,6 +912,176 @@
     </div>
   </div>
   <footer class="page-footer">END OF SECTION — AI-01 THROUGH AI-05 — PREPARED FOR REVIEW</footer>
+  </div>
+
+  <div class="group-panel" id="group-infra">
+  <div class="layout">
+    <div class="sheet-index" role="tablist" aria-label="Infrastructure sections">
+      <button class="tab-btn active" data-tab="inf1" role="tab" aria-selected="true"><span class="num">INF-01</span><span class="label">Core &amp; Staging</span></button>
+      <button class="tab-btn" data-tab="inf2" role="tab" aria-selected="false"><span class="num">INF-02</span><span class="label">Power, Network &amp; Backup</span></button>
+      <button class="tab-btn" data-tab="inf3" role="tab" aria-selected="false"><span class="num">INF-03</span><span class="label">Security &amp; Monitoring</span></button>
+      <button class="tab-btn" data-tab="inf4" role="tab" aria-selected="false"><span class="num">INF-04</span><span class="label">Workstation</span></button>
+    </div>
+
+    <div class="sheets">
+
+    <!-- ===================== INF-01 — CORE & STAGING ===================== -->
+    <section class="sheet active" id="inf1">
+      <div class="sheet-num">SHEET INF-01 / 04</div>
+      <h2>Core Server &amp; Staging</h2>
+      <p class="sheet-sub">Fully on-premises, sized with real headroom — not just for today's CRM, but for what gets added on top of it later.</p>
+
+      <div class="section">
+        <h3>Why a 2-socket rackmount server, not a basic tower</h3>
+        <p>A single-socket tower server (like a Lenovo ThinkSystem ST250 V3) would comfortably handle the CRM database alone. But the plan now includes Python-based pattern analysis (AI-03, AI-05) running on top of live CRM traffic, a standby server, more concurrent users over time, and modules or features not yet defined. A tower server's RAM ceiling — 128GB — is a real limit if any of that grows. Stepping up to a 2-socket rackmount server now means RAM can simply be added later without replacing the machine.</p>
+        <p>Spec: Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128–192GB RAM installed (expandable to 256GB or more), RAID-10 SSD storage around 4TB usable.</p>
+      </div>
+
+      <div class="section">
+        <h3>A standby server — for hardware failure, not disaster</h3>
+        <p>A second, full copy of the database, kept continuously in sync with the primary via SQL Server's built-in Always On / log shipping features. If the primary fails or needs maintenance, staff can be pointed at the standby within minutes instead of waiting on a restore. Failover is a deliberate, manual action — simpler and cheaper to set up correctly than fully automatic failover, and appropriate for a company this size. Once the primary is repaired, the same reverse-sync pattern used for migration rollback (S-02) brings any changes made on the standby back to the primary.</p>
+      </div>
+
+      <div class="section">
+        <h3>Staging/test server</h3>
+        <p>A smaller environment to safely validate each module's migration scripts before anything touches real, live data. Its job hasn't changed just because the production servers got bigger — it doesn't need to match their spec, only be realistic enough to catch real problems. A lower-spec physical server or a virtual machine on the core server both work; a VM is the more budget-friendly option now that the core server has real spare capacity to host one.</p>
+      </div>
+
+      <table class="rolltable">
+        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">Core server</td><td>Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128–192GB RAM, RAID-10 SSD</td><td>One-time</td><td>$7,000 – $12,000</td></tr>
+        <tr><td class="step">Standby server (HA)</td><td>Same class as core server, kept in sync via SQL Server Always On</td><td>One-time</td><td>$7,000 – $12,000</td></tr>
+        <tr><td class="step">Staging/test server</td><td>Lower-spec tower server, or a VM on the core server</td><td>One-time</td><td>$0 – $2,500</td></tr>
+      </table>
+      <p><b>Subtotal, this sheet:</b> roughly $14,000 – $26,500</p>
+
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>RAM headroom is the deliberate choice here, not overspending — a 2-socket server's real value is the ability to add capacity later without another hardware purchase and migration.</p>
+      </div>
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Decide staging's approach — dedicated hardware or a VM on the core server — as a budget/isolation trade-off, not a technical necessity either way.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-01</span><span>CORE &amp; STAGING</span></div>
+    </section>
+
+    <!-- ===================== INF-02 — POWER, NETWORK & BACKUP ===================== -->
+    <section class="sheet" id="inf2">
+      <div class="sheet-num">SHEET INF-02 / 04</div>
+      <h2>Power, Network &amp; Backup</h2>
+      <p class="sheet-sub">Protection built deliberately — since none of it happens invisibly the way it would with a cloud provider.</p>
+
+      <div class="section">
+        <h3>Power protection</h3>
+        <p>Separate UPS units for the core and standby servers, each sized around 2200–3000VA, with a smaller unit covering staging and networking gear — keeping power protection independent across the critical machines.</p>
+      </div>
+
+      <div class="section">
+        <h3>Network &amp; remote access</h3>
+        <p>A firewall/VPN appliance (Ubiquiti UniFi Dream Machine Pro, or Fortinet FortiGate 60F) handling both perimeter security and secure remote access for field staff.</p>
+      </div>
+
+      <div class="section">
+        <h3>Offsite backup</h3>
+        <p>A nightly backup routine with a copy stored off-site, protecting against site-level events a standby server can't cover.</p>
+      </div>
+
+      <div class="section">
+        <h3>AI feature usage</h3>
+        <p>Pay-per-use, scaling directly with actual usage.</p>
+      </div>
+
+      <table class="rolltable">
+        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">UPS (3 units — core, standby, staging/network)</td><td>2x APC Smart-UPS 2200–3000VA, plus original 1500VA unit</td><td>One-time</td><td>$1,800 – $3,100</td></tr>
+        <tr><td class="step">VPN / firewall appliance</td><td>Ubiquiti UniFi Dream Machine Pro, or Fortinet FortiGate 60F</td><td>One-time</td><td>$300 – $600</td></tr>
+        <tr><td class="step">Firewall security subscription</td><td>Vendor threat-protection subscription</td><td>Recurring — yearly</td><td>$150 – $300</td></tr>
+        <tr><td class="step">Offsite backup service</td><td>Backblaze Business Backup, or B2 cloud storage</td><td>Recurring — monthly</td><td>$20 – $60</td></tr>
+        <tr><td class="step">AI feature usage</td><td>Hosted AI API, pay-per-use</td><td>Recurring — monthly</td><td>$50 – $200</td></tr>
+        <tr><td class="step">IT maintenance (if outsourced)</td><td>Local IT contractor / MSP retainer</td><td>Recurring — monthly</td><td>$0 – $600</td></tr>
+      </table>
+      <p><b>Subtotal, this sheet:</b> roughly $2,100 – $3,700 one-time, plus $70 – $260/month recurring before an outsourced IT retainer (up to $860/month if fully outsourced).</p>
+      <p><b>Combined total across INF-01 and INF-02:</b> roughly $16,100 – $30,200 one-time hardware, plus the same recurring monthly range above.</p>
+
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>IT maintenance nudged up slightly from the earlier estimate — there's simply more physical hardware to monitor now (2 critical servers, a staging box, 3 UPS units) if that responsibility is ever outsourced rather than handled in-house.</p>
+      </div>
+      <div class="callout risk">
+        <span class="tag"></span>
+        <p>The standby server covers hardware failure, not site-level disaster. If the building has a fire, flood, or theft, both the primary and standby go down together since they're co-located — only the offsite backup plan actually survives that scenario, and only if it's tested regularly.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-02</span><span>POWER, NETWORK &amp; BACKUP</span></div>
+    </section>
+
+    <!-- ===================== INF-03 — SECURITY & MONITORING ===================== -->
+    <section class="sheet" id="inf3">
+      <div class="sheet-num">SHEET INF-03 / 04</div>
+      <h2>Security &amp; Monitoring</h2>
+      <p class="sheet-sub">Mostly configuration, not new purchases — the pieces needed are largely already included in what's already being bought.</p>
+
+      <div class="section">
+        <h3>Security</h3>
+        <ul>
+          <li><b>Encryption in transit</b> — standard TLS/SSL between the browser, API, and database, using free certificates (Let's Encrypt)</li>
+          <li><b>Encryption at rest</b> — SQL Server's built-in Transparent Data Encryption (TDE), included with SQL Server, just needs to be turned on</li>
+          <li><b>Role-based access control</b> — enforced at the API layer (S-03): a sales rep's login only ever returns what a sales rep should see</li>
+          <li><b>Multi-factor authentication</b> — for VPN and admin logins, natively supported by the firewall appliance already in the plan</li>
+          <li><b>Patch management</b> — a real recurring schedule, tested on staging first before production</li>
+          <li><b>A password/secrets manager</b> — real credential storage instead of anyone's notes or memory</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>Monitoring</h3>
+        <ul>
+          <li><b>Server health</b> — CPU, RAM, disk, uptime — built into both Lenovo (XClarity) and Dell (iDRAC) server management, no extra cost</li>
+          <li><b>Database monitoring</b> — SQL Server Agent, included with SQL Server, can alert on issues like low disk space automatically</li>
+          <li><b>Security monitoring</b> — intrusion detection (IDS/IPS) already included in the firewall appliance</li>
+          <li><b>Backup verification</b> — an automated alert confirming last night's backup actually completed, not just assumed</li>
+          <li><b>AI usage monitoring</b> — a spending cap and alert set with the AI provider, so a usage spike is a notification, not a surprise bill</li>
+        </ul>
+      </div>
+
+      <table class="rolltable">
+        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">Password/secrets manager</td><td>Bitwarden Business, or equivalent</td><td>Recurring — monthly, per user</td><td>$3 – $8</td></tr>
+      </table>
+
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>Almost none of this needs new purchased tools — SQL Server, the server hardware, and the firewall appliance already include what's needed. The real cost here is configuration discipline and a recurring schedule, not additional line items on the budget.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-03</span><span>SECURITY &amp; MONITORING</span></div>
+    </section>
+
+    <!-- ===================== INF-04 — WORKSTATION ===================== -->
+    <section class="sheet" id="inf4">
+      <div class="sheet-num">SHEET INF-04 / 04</div>
+      <h2>Workstation Requirements</h2>
+      <p class="sheet-sub">What the developer actually needs day to day — separate from the servers, and nothing exotic.</p>
+
+      <div class="section">
+        <h3>The setup</h3>
+        <p>Since local testing involves running a local database instance, containers, and multiple tools at once, a step up from a bare-minimum laptop is worth it: a modern 8+ core CPU (Intel i7/i9 13th-gen or newer, AMD Ryzen 7/9, or Apple M-series Pro/Max), 32GB RAM, and 512GB–1TB SSD storage. A 27"+ QHD external monitor makes a real difference for comparing code, schema, and documentation side by side — two, if budget allows.</p>
+      </div>
+
+      <table class="rolltable">
+        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">Laptop</td><td>Modern 8+ core CPU, 32GB RAM, 512GB–1TB SSD</td><td>One-time</td><td>$1,500 – $2,500</td></tr>
+        <tr><td class="step">External monitor(s)</td><td>27"+ QHD display</td><td>One-time</td><td>$250 – $450 each</td></tr>
+      </table>
+
+      <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-04</span><span>WORKSTATION</span></div>
+    </section>
+
+    </div>
+  </div>
+  <footer class="page-footer">END OF SECTION — INF-01 THROUGH INF-04 — PREPARED FOR REVIEW</footer>
   </div>
 
 </div>
