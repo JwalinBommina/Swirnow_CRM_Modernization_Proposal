@@ -387,7 +387,7 @@
   .group-tabs{
     display:flex;
     gap:22px;
-    margin-bottom:0;
+    margin-bottom:28px;
     flex-wrap:wrap;
     align-items:flex-start;
   }
@@ -482,6 +482,8 @@
     .group-tab{flex:1 1 100%;font-size:15px;padding:15px 16px;box-shadow:4px 4px 0 var(--ink);}
     .group-tab:hover{transform:translate(-1px,-1px);box-shadow:5px 5px 0 var(--ink);}
     .group-tab.active{transform:translate(4px,4px);box-shadow:0 0 0 var(--ink);}
+    .rolltable{display:block;overflow-x:auto;white-space:nowrap;font-size:12px;}
+    .rolltable th, .rolltable td{padding:8px 9px;}
   }
 </style>
 </head>
@@ -491,21 +493,20 @@
 <div class="titleblock">
     <div class="eyebrow">Technical Proposal · Internal Systems</div>
     <h1>CRM Modernization &amp; AI Roadmap</h1>
-    <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — and a look at what fifty years of Swirnow's own data can do once it does, without interrupting daily use by sales, project management, and back-office teams.</p>
+    <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — and a look at what two decades of Swirnow's own project data can do once it does, without interrupting daily use by sales, project management, and back-office teams.</p>
     <div class="meta-row">
       <span><b>Project</b> &nbsp;Swirnow Building Systems — CRM Platform</span>
-      <span><b>Sheets</b> &nbsp;10 across 2 sections</span>
+      <span><b>Sheets</b> &nbsp;11 across 2 sections</span>
       <span><b>Status</b> &nbsp;Proposal for review</span>
     </div>
   </div>
 
   <div class="group-tabs" role="tablist" aria-label="Proposal sections">
-    <button class="group-tab active" data-group="migration">CRM Modernization<small>Database, migration, API, front end</small></button>
-    <button class="group-tab ai-tab" data-group="ai">AI Opportunities<small>What 50 years of data can do for you</small></button>
+    <button class="group-tab active" data-group="migration">CRM Modernization</button>
+    <button class="group-tab ai-tab" data-group="ai">AI Opportunities</button>
   </div>
 
   <div class="group-panel active" id="group-migration">
-  <div class="section-banner orange">CRM MODERNIZATION <span>— database, migration, API, front end</span></div>
   <div class="layout">
     <div class="sheet-index" role="tablist" aria-label="Proposal sections">
     <button class="tab-btn active" data-tab="t1" role="tab" aria-selected="true"><span class="num">S-01</span><span class="label">Database Structure</span></button>
@@ -513,12 +514,13 @@
     <button class="tab-btn" data-tab="t3" role="tab" aria-selected="false"><span class="num">S-03</span><span class="label">API Layer</span></button>
     <button class="tab-btn" data-tab="t4" role="tab" aria-selected="false"><span class="num">S-04</span><span class="label">Front End &amp; AI</span></button>
     <button class="tab-btn" data-tab="t5" role="tab" aria-selected="false"><span class="num">S-05</span><span class="label">The Bottom Line</span></button>
+    <button class="tab-btn" data-tab="t6" role="tab" aria-selected="false"><span class="num">S-06</span><span class="label">Infrastructure</span></button>
   </div>
 
     <div class="sheets">
 <!-- ===================== SHEET 1 — DATABASE STRUCTURE ===================== -->
   <section class="sheet active" id="t1">
-    <div class="sheet-num">SHEET S-01 / 05</div>
+    <div class="sheet-num">SHEET S-01 / 06</div>
     <h2>Database Structure</h2>
     <p class="sheet-sub">What the current schema tells us about how the business evolved, and how the redesign fixes it without losing what already works.</p>
 
@@ -574,7 +576,7 @@
 
   <!-- ===================== SHEET 2 — MIGRATION STRATEGY ===================== -->
   <section class="sheet" id="t2">
-    <div class="sheet-num">SHEET S-02 / 05</div>
+    <div class="sheet-num">SHEET S-02 / 06</div>
     <h2>Migration Strategy</h2>
     <p class="sheet-sub">The system is used every day. The plan keeps it fully operational throughout, and lets us prove the new platform works before anyone's workflow depends on it.</p>
 
@@ -632,7 +634,7 @@
 
   <!-- ===================== SHEET 3 — API LAYER ===================== -->
   <section class="sheet" id="t3">
-    <div class="sheet-num">SHEET S-03 / 05</div>
+    <div class="sheet-num">SHEET S-03 / 06</div>
     <h2>API Layer</h2>
     <p class="sheet-sub">The piece that doesn't exist today — a single, governed front door to the data that every future front end, integration, and AI feature builds on.</p>
 
@@ -686,7 +688,7 @@
 
   <!-- ===================== SHEET 4 — FRONT END & AI ===================== -->
   <section class="sheet" id="t4">
-    <div class="sheet-num">SHEET S-04 / 05</div>
+    <div class="sheet-num">SHEET S-04 / 06</div>
     <h2>Front End &amp; AI</h2>
     <p class="sheet-sub">By this point the hard problems — data integrity, live migration — are solved. The remaining risk is adoption, not architecture.</p>
 
@@ -732,7 +734,7 @@
 
   <!-- ===================== SHEET 5 — THE BOTTOM LINE ===================== -->
   <section class="sheet" id="t5">
-    <div class="sheet-num">SHEET S-05 / 05</div>
+    <div class="sheet-num">SHEET S-05 / 06</div>
     <h2>The Bottom Line</h2>
     <p class="sheet-sub">Same plan, no jargon — for anyone in the room who wasn't tracking the acronyms on sheets 1 through 4.</p>
 
@@ -773,13 +775,90 @@
     <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-05</span><span>THE BOTTOM LINE</span></div>
   </section>
 
-  <footer class="page-footer">END OF SECTION — S-01 THROUGH S-05</footer>
+  <!-- ===================== SHEET 6 — INFRASTRUCTURE & REQUIREMENTS ===================== -->
+  <section class="sheet" id="t6">
+    <div class="sheet-num">SHEET S-06 / 06</div>
+    <h2>Infrastructure &amp; Requirements</h2>
+    <p class="sheet-sub">Fully on-premises — no cloud dependency for the database or application. Real hardware, sized for a company like Swirnow, with the trade-offs that come with owning it directly instead of renting it.</p>
+
+    <div class="section">
+      <h3>The core server</h3>
+      <p>One physical server, housed on-site, runs the database, the API layer, and the internal web server for the front end. Sized for a small-business CRM workload — this isn't a large enterprise dataset — a mainstream tower or small rack server fits well: something in the class of a Lenovo ThinkSystem ST250 V3 or Dell PowerEdge T-series, with roughly 32–64GB of RAM and RAID-10 SSD storage (around 2TB usable) for redundancy against a single drive failure. Rough new-hardware cost: <b>$4,000–$7,000</b>, though an exact number needs a vendor quote once specs are finalized.</p>
+    </div>
+
+    <div class="section">
+      <h3>A second, smaller box for staging</h3>
+      <p>Same need as before, just on-premises now: a smaller test environment to safely validate each module's migration scripts (per the freeze process in S-02) before anything touches real, live data. This can be a lower-spec second server, or a virtual machine running on the same physical box if budget is tight — either works.</p>
+    </div>
+
+    <div class="section">
+      <h3>Backup and power protection — now Swirnow's job, not a vendor's</h3>
+      <p>A cloud provider handles this invisibly. On-premises, it has to be built deliberately:</p>
+      <ul>
+        <li><b>A UPS (battery backup)</b> to protect against power outages corrupting data mid-write</li>
+        <li><b>RAID storage</b> (already factored into the server spec above) so one failed drive doesn't mean lost data</li>
+        <li><b>A real backup routine with an offsite copy</b> — even fully on-premises, at least one backup copy needs to live somewhere other than the building itself (a rotated external drive, or a low-cost backup service used purely for disaster recovery, not daily operation)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3>Remote access for the team</h3>
+      <p>Sales reps working in the field need to reach the CRM from outside the building. On-premises, that means setting up a secure VPN into the internal network — an extra piece of setup a cloud-hosted system would have handled automatically.</p>
+    </div>
+
+    <div class="section">
+      <h3>AI features — the one honest exception</h3>
+      <p>Running a language model powerful enough for natural-language search entirely in-house would need serious, specialized GPU hardware — realistically tens of thousands of dollars, disproportionate to a company this size, and still likely lower quality than hosted options. The practical approach: the database and application stay fully on-premises, but AI feature requests go out over the internet to a pay-per-use hosted AI provider — the CRM data itself never has to leave the building, only the specific request being asked.</p>
+    </div>
+
+    <div class="section">
+      <h3>What the team actually needs day to day</h3>
+      <p>A standard, modern development laptop — nothing specialized. Someone needs ongoing responsibility for the physical server: applying updates, monitoring for hardware issues, and responding if something fails.</p>
+    </div>
+
+    <div class="section">
+      <h3>The full cost breakdown</h3>
+      <table class="rolltable">
+        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">Core server</td><td>Lenovo ThinkSystem ST250 V3 or Dell PowerEdge T350, ~64GB RAM, RAID-10 SSD</td><td>One-time</td><td>$3,500 – $6,500</td></tr>
+        <tr><td class="step">Staging/test server</td><td>Lower-spec ST250 V3, or a VM on the core server</td><td>One-time</td><td>$0 – $2,500</td></tr>
+        <tr><td class="step">UPS (battery backup)</td><td>APC Smart-UPS 1500VA (SMT1500C-class)</td><td>One-time</td><td>$400 – $700</td></tr>
+        <tr><td class="step">VPN / firewall appliance</td><td>Ubiquiti UniFi Dream Machine Pro, or Fortinet FortiGate 60F</td><td>One-time</td><td>$300 – $600</td></tr>
+        <tr><td class="step">Firewall security subscription</td><td>Vendor threat-protection subscription</td><td>Recurring — yearly</td><td>$150 – $300</td></tr>
+        <tr><td class="step">Offsite backup service</td><td>Backblaze Business Backup, or B2 cloud storage</td><td>Recurring — monthly</td><td>$20 – $60</td></tr>
+        <tr><td class="step">AI feature usage</td><td>Hosted AI API, pay-per-use</td><td>Recurring — monthly</td><td>$50 – $200</td></tr>
+        <tr><td class="step">IT maintenance (if outsourced)</td><td>Local IT contractor / MSP retainer</td><td>Recurring — monthly</td><td>$0 – $500</td></tr>
+      </table>
+      <p><b>One-time hardware total:</b> roughly $4,200 – $10,300, depending on final server specs and whether staging runs on separate hardware or a VM.<br><b>Recurring monthly total:</b> roughly $70 – $260/month before any outsourced IT retainer (plus the firewall subscription, billed yearly), or up to $760/month if IT support is fully outsourced rather than handled by the in-house technical hire.</p>
+    </div>
+
+    <div class="callout tech">
+      <span class="tag"></span>
+      <p>UPS runtime, specifically: a 1500VA APC Smart-UPS doesn't keep the server running indefinitely — it's built to bridge a brief outage and allow a clean shutdown, not survive an extended blackout. At the power draw a single small server actually uses (roughly 150–300W, well under the UPS's full 1000W capacity), real-world runtime lands around 30–90 minutes — enough time to either ride out a short outage or shut down safely, not a substitute for a generator if outages in the area tend to run long.</p>
+    </div>
+
+    <div class="callout tech">
+      <span class="tag"></span>
+      <p>Cost shape is different from cloud: mostly a one-time hardware purchase rather than an ongoing monthly bill. Ongoing costs after the initial buildout are mainly electricity, internet, backup service, AI API usage, and an eventual hardware refresh in about 5 years — not a recurring hosting fee. All figures above are planning ranges based on current market pricing, not vendor quotes — final numbers should be confirmed once exact specs and providers are chosen.</p>
+    </div>
+    <div class="callout biz">
+      <span class="tag"></span>
+      <p>Decide who owns ongoing IT maintenance — patching, monitoring, responding to hardware failures. With no cloud provider's SLA behind it, this responsibility sits entirely with Swirnow, whether that's the same technical hire or a separate IT contractor.</p>
+    </div>
+    <div class="callout risk">
+      <span class="tag"></span>
+      <p>No cloud provider means no automatic disaster recovery. If the building has a fire, flood, or theft, cloud-hosted data would survive automatically — on-premises data only survives if the offsite backup plan above is actually in place and tested, not just set up once and forgotten.</p>
+    </div>
+
+    <div class="sheet-footer"><span>SWIRNOW — CRM MODERNIZATION</span><span>SHEET S-06</span><span>INFRASTRUCTURE</span></div>
+  </section>
+
+  <footer class="page-footer">END OF SECTION — S-01 THROUGH S-06</footer>
     </div>
   </div>
   </div>
 
   <div class="group-panel" id="group-ai">
-  <div class="section-banner green">AI OPPORTUNITIES <span>— what 50 years of data can do for you</span></div>
   <div class="layout">
     <div class="sheet-index" role="tablist" aria-label="AI opportunity sections">
       <button class="tab-btn active" data-tab="ai1" role="tab" aria-selected="true"><span class="num">AI-01</span><span class="label">Similar Projects</span></button>
@@ -799,7 +878,7 @@
 
       <div class="section">
         <h3>The problem today</h3>
-        <p>When someone's estimating a new project, the only way to remember "didn't we do something like this a few years ago?" is to actually remember it. Fifty years of experience is only useful if someone happens to recall the right example at the right moment.</p>
+        <p>When someone's estimating a new project, the only way to remember "didn't we do something like this a few years ago?" is to actually remember it. Twenty years of recorded projects are only useful if someone happens to recall the right example at the right moment.</p>
       </div>
 
       <div class="section">
@@ -932,7 +1011,9 @@
       btn.classList.add('active');
       btn.setAttribute('aria-selected','true');
       document.getElementById(btn.dataset.tab).classList.add('active');
-      window.scrollTo({top: 0, behavior: 'smooth'});
+      const anchor = panel.querySelector('.sheet-index');
+      const targetY = anchor.getBoundingClientRect().top + window.pageYOffset - 16;
+      window.scrollTo({top: targetY, behavior: 'smooth'});
     });
   });
 </script>
