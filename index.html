@@ -279,6 +279,7 @@
   .callout.final{border:3px solid var(--ink);background:var(--tag);}
   .callout.final .tag{background:var(--ink);color:var(--tag-light);}
   .callout.final .tag::before{content:"BOTTOM LINE";}
+  .callout.final.grand-total .tag::before{content:"GRAND TOTAL";}
   .callout.final p{font-size:15px;font-weight:600;}
   .callout p{color:var(--ink);margin:0;}
 
@@ -1216,7 +1217,7 @@
 
       <table class="rolltable">
         <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Password/secrets manager</td><td>Bitwarden Business, or equivalent</td><td>Recurring — monthly, per user</td><td>$3 – $8</td></tr>
+        <tr><td class="step">Password/secrets manager</td><td>Bitwarden Business, or equivalent, ~20–40 users</td><td>Recurring — monthly</td><td>$60 – $320</td></tr>
       </table>
 
       <div class="callout tech">
@@ -1243,6 +1244,23 @@
         <tr><td class="step">Laptop</td><td>Modern 8+ core CPU, 32GB RAM, 512GB–1TB SSD</td><td>One-time</td><td>$1,500 – $2,500</td></tr>
         <tr><td class="step">External monitor(s)</td><td>27"+ QHD display</td><td>One-time</td><td>$250 – $450 each</td></tr>
       </table>
+
+      <div class="section">
+        <h3>The full picture — time and cost together</h3>
+        <p>Every number from every sheet on this site, pulled into one place:</p>
+        <table class="rolltable">
+          <tr><th>Category</th><th>Total</th></tr>
+          <tr><td class="step">Implementation timeline</td><td>9 – 12 months (see T-04)</td></tr>
+          <tr><td class="step">One-time investment, all infrastructure combined</td><td>$32,950 – $64,950<br><small style="font-weight:400;">($30,550 – $58,950 if hosting on Linux instead of Windows Server)</small></td></tr>
+          <tr><td class="step">Recurring monthly</td><td>$130 – $580<br><small style="font-weight:400;">(up to $1,180/month if IT support is fully outsourced)</small></td></tr>
+          <tr><td class="step">Recurring yearly</td><td>$1,550 – $3,900<br><small style="font-weight:400;">(hardware support + firewall subscription)</small></td></tr>
+        </table>
+      </div>
+
+      <div class="callout final grand-total">
+        <span class="tag"></span>
+        <p>9 to 12 months, roughly $31,000 to $65,000 one-time depending on OS choice, and under $2,000/month recurring for a fully redundant, on-premises system built to last — not the fastest number possible, but the one the business can actually plan around.</p>
+      </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-04</span><span>WORKSTATION</span></div>
     </section>
