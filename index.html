@@ -21,6 +21,8 @@
     --orange-deep: #A63F10;
     --steel: #2F5670;
     --steel-deep: #1F3C50;
+    --gold: #B8860B;
+    --gold-deep: #8B6508;
     --green: #3F7D4A;
     --green-deep: #2C5A34;
     --caution: #E8B23D;
@@ -431,6 +433,7 @@
   }
   .group-tab.ai-tab.active{background:var(--green);}
   .group-tab.infra-tab.active{background:var(--steel);}
+  .group-tab.timeline-tab.active{background:var(--gold);}
   .group-tab.active::before{content:"NOW VIEWING";color:var(--tag-light);opacity:0.85;}
   .group-tab.active:hover{transform:translate(5px,5px);box-shadow:0 0 0 var(--ink);}
   .group-tab.active small{color:var(--tag-light);opacity:0.9;}
@@ -499,13 +502,14 @@
     <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — and a look at what two decades of Swirnow's own project data can do once it does, without interrupting daily use by sales, project management, and back-office teams.</p>
     <div class="meta-row">
       <span><b>Project</b> &nbsp;Swirnow Building Systems — CRM Platform</span>
-      <span><b>Sheets</b> &nbsp;14 across 3 sections</span>
+      <span><b>Sheets</b> &nbsp;18 across 4 sections</span>
       <span><b>Status</b> &nbsp;Proposal for review</span>
     </div>
   </div>
 
   <div class="group-tabs" role="tablist" aria-label="Proposal sections">
     <button class="group-tab active" data-group="migration">CRM Modernization</button>
+    <button class="group-tab timeline-tab" data-group="timeline">Timeline &amp; Phasing</button>
     <button class="group-tab ai-tab" data-group="ai">AI Opportunities</button>
     <button class="group-tab infra-tab" data-group="infra">Infrastructure</button>
   </div>
@@ -781,6 +785,134 @@
   <footer class="page-footer">END OF SECTION — S-01 THROUGH S-05</footer>
     </div>
   </div>
+  </div>
+
+  <div class="group-panel" id="group-timeline">
+  <div class="layout">
+    <div class="sheet-index" role="tablist" aria-label="Timeline and phasing sections">
+      <button class="tab-btn active" data-tab="tl1" role="tab" aria-selected="true"><span class="num">T-01</span><span class="label">Phase Sequencing</span></button>
+      <button class="tab-btn" data-tab="tl2" role="tab" aria-selected="false"><span class="num">T-02</span><span class="label">Starting Phase 1</span></button>
+      <button class="tab-btn" data-tab="tl3" role="tab" aria-selected="false"><span class="num">T-03</span><span class="label">The Existing Codebase</span></button>
+      <button class="tab-btn" data-tab="tl4" role="tab" aria-selected="false"><span class="num">T-04</span><span class="label">Timeline Estimate</span></button>
+    </div>
+
+    <div class="sheets">
+
+    <!-- ===================== T-01 — PHASE SEQUENCING ===================== -->
+    <section class="sheet active" id="tl1">
+      <div class="sheet-num">SHEET T-01 / 04</div>
+      <h2>Phase Sequencing</h2>
+      <p class="sheet-sub">What can genuinely happen in parallel, and what needs to happen in order — and why that ordering exists.</p>
+
+      <div class="section">
+        <h3>What can start immediately, in parallel</h3>
+        <ul>
+          <li><b>Infrastructure procurement</b> (S-06's core server, staging environment) and <b>discovery</b> (shadowing sales calls, PM meetings, auditing the existing codebase) don't depend on each other — both can begin on day one.</li>
+          <li>The standby server, full UPS redundancy, VPN, and AI feature buildout are not needed at the start — they can be built out progressively as the project approaches production go-live, not paid for and installed all at once up front.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>What has to happen in order, and why</h3>
+        <p>Within each module, the sequence is backend &rarr; API &rarr; front end, each one built and validated before the next begins — this is what makes each freeze low-risk rather than a leap of faith.</p>
+        <p>Across modules, the order is deliberately lowest-risk first: Contacts, then Marketing &amp; Expenses, then Activity, then Projects &amp; Jobs last. This isn't caution for its own sake — each successful module cutover proves the entire build-validate-freeze process actually works in practice, so by the time the hardest, highest-stakes module arrives, the team isn't testing the process for the first time on the part of the system that matters most.</p>
+      </div>
+
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Modules can overlap, not just run fully sequentially: once a module enters its validation window, work on the next module's backend can begin — the calendar time in a freeze window is mostly about earning confidence, not full-time engineering effort, so it doesn't block the next module from starting.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — TIMELINE &amp; PHASING</span><span>SHEET T-01</span><span>PHASE SEQUENCING</span></div>
+    </section>
+
+    <!-- ===================== T-02 — STARTING PHASE 1 ===================== -->
+    <section class="sheet" id="tl2">
+      <div class="sheet-num">SHEET T-02 / 04</div>
+      <h2>What's Needed to Begin Phase 1</h2>
+      <p class="sheet-sub">Less than the full infrastructure buildout — Phase 1 has a genuinely small starting footprint.</p>
+
+      <div class="section">
+        <h3>Infrastructure needed on day one</h3>
+        <ul>
+          <li>The core server and a staging environment — the two pieces needed to safely begin discovery and the first module's migration work</li>
+          <li>Everything else in the infrastructure plan (standby server, full UPS setup, VPN, AI feature access) can follow later, tied to when it's actually needed rather than all being procured up front</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <h3>Non-infrastructure needs on day one</h3>
+        <ul>
+          <li>Time with the sales, PM, and back-office teams to shadow real workflows</li>
+          <li>Access to the existing Master Matrix codebase and database for audit</li>
+          <li>Access to the previously contracted vendor's .NET Core work, so it can be reviewed as part of that same audit — see T-03</li>
+        </ul>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — TIMELINE &amp; PHASING</span><span>SHEET T-02</span><span>STARTING PHASE 1</span></div>
+    </section>
+
+    <!-- ===================== T-03 — THE EXISTING CODEBASE ===================== -->
+    <section class="sheet" id="tl3">
+      <div class="sheet-num">SHEET T-03 / 04</div>
+      <h2>The Existing Codebase — An Open Question</h2>
+      <p class="sheet-sub">Genuinely valuable information the team doesn't have yet — not an assumption in either direction.</p>
+
+      <div class="section">
+        <h3>What's different about this approach, worth naming clearly</h3>
+        <p>The previous vendor's engagement was a technical revamp — porting the backend to .NET Core. This proposal starts from a different place: deep discovery with the sales and PM teams to understand how the business actually works, before any redesign begins. That's not a criticism of the prior work — it's a different starting point, addressing a different part of the problem. The two efforts may complement each other more than either one alone.</p>
+      </div>
+
+      <div class="section">
+        <h3>Why a timeline impact can't be estimated yet</h3>
+        <p>Two honest, realistic scenarios, and there's no way to know which applies without reviewing the actual code:</p>
+        <ul>
+          <li>If the ported code faithfully preserves working business logic and mainly modernizes the language and runtime, it could meaningfully shorten the API-layer build described in S-03.</li>
+          <li>If it carried forward the same underlying schema issues identified in S-01 (the Project/Job flag, the repeating load-type columns) without addressing them, the core redesign work is largely unaffected either way — that work is about the data model, not the language it's read in.</li>
+        </ul>
+      </div>
+
+      <div class="callout tech">
+        <span class="tag"></span>
+        <p>Recommendation: reviewing this code is the first concrete action item of Phase 1, before finalizing any timeline commitment beyond the preliminary estimate in T-04. A short, focused audit — not a full commitment either way — is enough to know which scenario applies.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — TIMELINE &amp; PHASING</span><span>SHEET T-03</span><span>THE EXISTING CODEBASE</span></div>
+    </section>
+
+    <!-- ===================== T-04 — TIMELINE ESTIMATE ===================== -->
+    <section class="sheet" id="tl4">
+      <div class="sheet-num">SHEET T-04 / 04</div>
+      <h2>The Timeline Estimate</h2>
+      <p class="sheet-sub">9–12 months for the full rebuild — a number the team can actually plan around, not the fastest number that sounds good in the room.</p>
+
+      <div class="section">
+        <h3>Why this is the right number, not a hedge</h3>
+        <p>A shorter estimate that later needs extending is more disruptive to business planning than an accurate one stated upfront — schedules get built around a promised date, and missing it costs more trust than starting with the real number. This is a ground-up rebuild, informed by direct business discovery rather than a code port, and the timeline reflects that scope honestly. This is the plan to build the schedule around.</p>
+      </div>
+
+      <table class="rolltable">
+        <tr><th>Phase</th><th>Duration</th><th>What's happening</th></tr>
+        <tr><td class="step">Discovery &amp; assessment</td><td>4–5 weeks</td><td>Shadow workflows, audit the codebase and database, walk through the existing code with the prior vendor</td></tr>
+        <tr><td class="step">Contacts module</td><td>5–6 weeks</td><td>Lowest risk, first proof the full pipeline works end to end</td></tr>
+        <tr><td class="step">Marketing &amp; Expenses</td><td>5–6 weeks</td><td>Self-contained, benefits from lessons learned on Contacts</td></tr>
+        <tr><td class="step">Activity module</td><td>6–8 weeks</td><td>Higher volume, more downstream dependents</td></tr>
+        <tr><td class="step">Projects &amp; Jobs</td><td>15–22 weeks</td><td>Highest complexity — the lifecycle redesign, moved last, once the pipeline is proven</td></tr>
+        <tr><td class="step">Training, docs, stabilization</td><td>4–5 weeks</td><td>Buffer for cleanup, documentation, and settling in</td></tr>
+      </table>
+      <p><b>Total:</b> roughly 39–52 weeks — 9 to 12 months — for the core rebuild, before AI features, which follow once the API layer is fully live and trustworthy across all four modules.</p>
+
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Sticking to this number is the priority, not beating it. Where overlap between modules (T-01) can genuinely compress the schedule without adding risk, it will — but the number above is what the business should plan around.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — TIMELINE &amp; PHASING</span><span>SHEET T-04</span><span>TIMELINE ESTIMATE</span></div>
+    </section>
+
+    </div>
+  </div>
+  <footer class="page-footer">END OF SECTION — T-01 THROUGH T-04 — PREPARED FOR REVIEW</footer>
   </div>
 
   <div class="group-panel" id="group-ai">
