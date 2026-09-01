@@ -503,7 +503,7 @@
     <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — and a look at what two decades of Swirnow's own project data can do once it does, without interrupting daily use by sales, project management, and back-office teams.</p>
     <div class="meta-row">
       <span><b>Project</b> &nbsp;Swirnow Building Systems — CRM Platform</span>
-      <span><b>Sheets</b> &nbsp;18 across 4 sections</span>
+      <span><b>Sheets</b> &nbsp;19 across 4 sections</span>
       <span><b>Status</b> &nbsp;Proposal for review</span>
     </div>
   </div>
@@ -795,13 +795,14 @@
       <button class="tab-btn" data-tab="tl2" role="tab" aria-selected="false"><span class="num">T-02</span><span class="label">Starting Phase 1</span></button>
       <button class="tab-btn" data-tab="tl3" role="tab" aria-selected="false"><span class="num">T-03</span><span class="label">The Existing Codebase</span></button>
       <button class="tab-btn" data-tab="tl4" role="tab" aria-selected="false"><span class="num">T-04</span><span class="label">Timeline Estimate</span></button>
+      <button class="tab-btn" data-tab="tl5" role="tab" aria-selected="false"><span class="num">T-05</span><span class="label">Solo Execution</span></button>
     </div>
 
     <div class="sheets">
 
     <!-- ===================== T-01 — PHASE SEQUENCING ===================== -->
     <section class="sheet active" id="tl1">
-      <div class="sheet-num">SHEET T-01 / 04</div>
+      <div class="sheet-num">SHEET T-01 / 05</div>
       <h2>Phase Sequencing</h2>
       <p class="sheet-sub">What can genuinely happen in parallel, and what needs to happen in order — and why that ordering exists.</p>
 
@@ -829,7 +830,7 @@
 
     <!-- ===================== T-02 — STARTING PHASE 1 ===================== -->
     <section class="sheet" id="tl2">
-      <div class="sheet-num">SHEET T-02 / 04</div>
+      <div class="sheet-num">SHEET T-02 / 05</div>
       <h2>What's Needed to Begin Phase 1</h2>
       <p class="sheet-sub">Less than the full infrastructure buildout — Phase 1 has a genuinely small starting footprint.</p>
 
@@ -855,7 +856,7 @@
 
     <!-- ===================== T-03 — THE EXISTING CODEBASE ===================== -->
     <section class="sheet" id="tl3">
-      <div class="sheet-num">SHEET T-03 / 04</div>
+      <div class="sheet-num">SHEET T-03 / 05</div>
       <h2>The Existing Codebase — An Open Question</h2>
       <p class="sheet-sub">Genuinely valuable information the team doesn't have yet — not an assumption in either direction.</p>
 
@@ -883,7 +884,7 @@
 
     <!-- ===================== T-04 — TIMELINE ESTIMATE ===================== -->
     <section class="sheet" id="tl4">
-      <div class="sheet-num">SHEET T-04 / 04</div>
+      <div class="sheet-num">SHEET T-04 / 05</div>
       <h2>The Timeline Estimate</h2>
       <p class="sheet-sub">9–12 months for the full rebuild — a number the team can actually plan around, not the fastest number that sounds good in the room.</p>
 
@@ -911,9 +912,33 @@
       <div class="sheet-footer"><span>SWIRNOW — TIMELINE &amp; PHASING</span><span>SHEET T-04</span><span>TIMELINE ESTIMATE</span></div>
     </section>
 
+    <!-- ===================== T-05 — SOLO EXECUTION ===================== -->
+    <section class="sheet" id="tl5">
+      <div class="sheet-num">SHEET T-05 / 05</div>
+      <h2>Solo Execution</h2>
+      <p class="sheet-sub">The 9–12 month estimate in T-04 already assumes one technical resource, not a team — worth stating that plainly rather than leaving it implicit.</p>
+
+      <div class="section">
+        <h3>Working against the timeline</h3>
+        <p>One person can't parallelize effort the way a team could. If training a module's users, coordinating a freeze window, and starting the next module's backend all need real hours in the same week, that's genuine contention — not something the module overlap described in T-01 fully solves, since that reasoning assumes calendar-time overlap (waiting during another module's validation window), not effort-time overlap (actively working on two things at once).</p>
+      </div>
+
+      <div class="section">
+        <h3>Working for the timeline</h3>
+        <p>AI-assisted development — Cursor or Claude Code, both explicitly supported per the role's own scope — genuinely compresses raw coding time for a solo developer in a way that wouldn't have been true even a few years ago. That doesn't erase the constraint above, but it's a real, legitimate offset, not hand-waving.</p>
+      </div>
+
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>If the business wants this meaningfully faster than 9–12 months, the lever isn't compressing one person's work further — it's adding a second resource. Worth deciding deliberately, not assuming either way.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW — TIMELINE &amp; PHASING</span><span>SHEET T-05</span><span>SOLO EXECUTION</span></div>
+    </section>
+
     </div>
   </div>
-  <footer class="page-footer">END OF SECTION — T-01 THROUGH T-04 — PREPARED FOR REVIEW</footer>
+  <footer class="page-footer">END OF SECTION — T-01 THROUGH T-05 — PREPARED FOR REVIEW</footer>
   </div>
 
   <div class="group-panel" id="group-ai">
