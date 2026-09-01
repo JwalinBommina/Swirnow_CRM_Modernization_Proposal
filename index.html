@@ -1138,6 +1138,10 @@
         <span class="tag"></span>
         <p>The $18,000 per-server figure is anchored to a real, sealed Dell OEM system quote for a comparable configuration (128GB RAM, ~16TB of premium drives), adjusted for the R760's larger 2-socket chassis versus SAS drives instead of NVMe — not raw component list pricing, which runs meaningfully higher than what real bundled quotes deliver. A formal Dell quote is the natural next step once the project is approved, and should land within about 10-15% of this number.</p>
       </div>
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Confirm with Yvette that running staging as a VM on the standby server, rather than its own dedicated box, is acceptable operationally — it's the budget-friendly choice, but it does mean staging work and standby replication share the same physical machine.</p>
+      </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-01</span><span>CORE &amp; STAGING</span></div>
     </section>
@@ -1167,7 +1171,7 @@
       <table class="rolltable">
         <tr><th>Item</th><th>Locked spec</th><th>Type</th><th>Est. cost</th></tr>
         <tr><td class="step">UPS — core &amp; standby</td><td>2x APC Smart-UPS SMT2200C</td><td>One-time</td><td>$3,300</td></tr>
-        <tr><td class="step">UPS — staging/network</td><td>APC Smart-UPS SMT1500C</td><td>One-time</td><td>$770</td></tr>
+        <tr><td class="step" style="white-space:nowrap;">UPS — staging/network</td><td>APC Smart-UPS SMT1500C</td><td>One-time</td><td>$770</td></tr>
         <tr><td class="step">Offsite backup service</td><td>Backblaze B2 Cloud Storage, 8TB at $6/TB/month</td><td>Recurring — monthly</td><td>$48</td></tr>
         <tr><td class="step">AI feature usage</td><td>Hosted AI API, pay-per-use</td><td>Recurring — monthly</td><td>$120</td></tr>
         <tr><td class="step">IT maintenance</td><td>In-house (default) — or a local contractor/MSP retainer if outsourced</td><td>Recurring — monthly</td><td>$0, or $400 if outsourced</td></tr>
@@ -1243,13 +1247,12 @@
 
       <div class="section">
         <h3>The setup</h3>
-        <p>Since local testing involves running a local database instance, containers, and multiple tools at once, a step up from a bare-minimum laptop is worth it: a modern 8+ core CPU (Intel i7/i9 13th-gen or newer, AMD Ryzen 7/9, or Apple M-series Pro/Max), 32GB RAM, and 512GB–1TB SSD storage. A 27"+ QHD external monitor makes a real difference for comparing code, schema, and documentation side by side — two, if budget allows.</p>
+        <p>Since day-to-day work means SSHing into and administering the two Linux R760s, plus local database and Python analysis work, laptop choice matters more than a generic spec would suggest. Recommendation: <b>Lenovo ThinkPad T16</b> — strong Linux compatibility, a keyboard built for heavy daily admin and coding work, and business-grade reliability, configured with 32GB RAM and a 1TB SSD.</p>
       </div>
 
       <table class="rolltable">
-        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Laptop</td><td>Modern 8+ core CPU, 32GB RAM, 512GB–1TB SSD</td><td>One-time</td><td>$2,000</td></tr>
-        <tr><td class="step">External monitor</td><td>27"+ QHD display</td><td>One-time</td><td>$350</td></tr>
+        <tr><th>Item</th><th>Locked spec</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">Laptop</td><td>Lenovo ThinkPad T16 Gen 4, Core Ultra 7, 32GB RAM, 1TB SSD</td><td>One-time</td><td>$1,500</td></tr>
       </table>
 
       <div class="section">
@@ -1258,7 +1261,7 @@
         <table class="rolltable">
           <tr><th>Category</th><th>Total</th></tr>
           <tr><td class="step">Implementation timeline</td><td>9 – 12 months (see T-04)</td></tr>
-          <tr><td class="step">One-time investment, all infrastructure combined</td><td>$42,920</td></tr>
+          <tr><td class="step">One-time investment, all infrastructure combined</td><td>$42,070</td></tr>
           <tr><td class="step">Recurring monthly</td><td>$318<br><small style="font-weight:400;">($718/month if IT support is outsourced)</small></td></tr>
           <tr><td class="step">Recurring yearly</td><td>$3,600<br><small style="font-weight:400;">(hardware support — VPN/firewall subscription pending ISP decision)</small></td></tr>
         </table>
@@ -1266,7 +1269,7 @@
 
       <div class="callout final grand-total">
         <span class="tag"></span>
-        <p>9 to 12 months, $42,920 one-time, and $318/month recurring (or $718/month if IT is outsourced) for a fully redundant, on-premises system built to last — a single planning number for a fully locked spec, not the fastest number possible, but the one the business can actually plan around.</p>
+        <p>9 to 12 months, $42,070 one-time, and $318/month recurring (or $718/month if IT is outsourced) for a fully redundant, on-premises system built to last — a single planning number for a fully locked spec, not the fastest number possible, but the one the business can actually plan around.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-04</span><span>WORKSTATION</span></div>
