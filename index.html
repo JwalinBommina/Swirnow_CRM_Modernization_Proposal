@@ -500,7 +500,7 @@
 <div class="titleblock">
     <div class="eyebrow">Technical Proposal · Internal Systems</div>
     <h1>CRM Modernization &amp; AI Roadmap</h1>
-    <p class="subhead">A phased plan to migrate the Master Matrix CRM off its legacy .NET / SQL Server foundation onto a modern, API-driven platform — and a look at what two decades of Swirnow's own project data can do once it does, without interrupting daily use by sales, project management, and back-office teams.</p>
+    <p class="subhead">A phased plan to move the Master Matrix CRM off its legacy .NET and SQL Server foundation onto a modern, PostgreSQL-based, API-driven platform — and a look at what two decades of Swirnow's own project data can do once it's there. All without interrupting daily use by sales, project management, and back-office teams.</p>
     <div class="meta-row">
       <span><b>Project</b> &nbsp;Swirnow Building Systems — CRM Platform</span>
       <span><b>Sheets</b> &nbsp;19 across 4 sections</span>
@@ -566,7 +566,7 @@
     <div class="callout tech">
       <span class="tag"></span>
       <span class="label">Technical decision</span>
-      <p>The current Master Matrix database is a legacy schema that's carried Access-era conventions (like the -1/0 boolean flags) for roughly two decades. The question isn't whether to leave it behind — it's what to replace it with, and that choice is made alongside the app framework decision in S-03, not in isolation. A current-generation SQL Server keeps existing T-SQL and schema logic largely intact if the app layer stays close to its current shape; moving to PostgreSQL only pays off if the app layer is also being rebuilt from scratch, since otherwise the migration cost is paid twice for no real gain.</p>
+      <p>The current Master Matrix database is a legacy schema that's carried Access-era conventions (like the -1/0 boolean flags) for roughly two decades. The redesign moves to PostgreSQL, hosted on Linux — open-source, no licensing cost, and a natural fit given the app layer is being rebuilt from scratch rather than staying close to the legacy .NET shape. That's the condition under which moving off SQL Server actually pays off, and it's the condition this project meets.</p>
     </div>
     <div class="callout biz">
       <span class="tag"></span>
@@ -1089,73 +1089,54 @@
     <section class="sheet active" id="inf1">
       <div class="sheet-num">SHEET INF-01 / 04</div>
       <h2>Core Server &amp; Staging</h2>
-      <p class="sheet-sub">Fully on-premises, sized with real headroom — not just for today's CRM, but for what gets added on top of it later.</p>
+      <p class="sheet-sub">Fully on-premises, sized with real headroom — not just for today's CRM, but for what gets added on top of it later. Specs locked, single planning numbers below, not ranges.</p>
 
       <div class="section">
         <h3>Why a 2-socket rackmount server, not a basic tower</h3>
-        <p>A single-socket tower server (like a Lenovo ThinkSystem ST250 V3) would comfortably handle the CRM database alone. But the plan now includes Python-based pattern analysis (AI-03, AI-05) running on top of live CRM traffic, a standby server, more concurrent users over time, and modules or features not yet defined. A tower server's RAM ceiling — 128GB — is a real limit if any of that grows. Stepping up to a 2-socket rackmount server now means RAM can simply be added later without replacing the machine.</p>
-        <p>Spec: Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128GB RAM installed as the starting point (expandable to 256GB or more without replacing the machine), RAID-10 SSD storage at 8TB usable — doubled from an initial 4TB plan, leaving real room for a possible future document/drawing archive at a modest added cost.</p>
+        <p>A single-socket tower server would comfortably handle the CRM database alone. But the plan now includes Python-based pattern analysis (AI-03, AI-05) running on top of live CRM traffic, a standby server, more concurrent users over time, and modules or features not yet defined. A tower server's RAM ceiling — 128GB — is a real limit if any of that grows. Stepping up to a 2-socket rackmount server now means RAM can simply be added later without replacing the machine.</p>
+        <p>Locked spec: Dell PowerEdge R760 (16th-generation — R750 was 15th-gen and is now superseded), 2x 16-core processors (32 total cores), 128GB DDR5 RAM via 4x 32GB RDIMMs — using only 4 of the chassis's 32 memory slots, leaving 28 open for future growth without replacing anything already installed. RAID-10 storage at 8TB usable (8x 2TB Mixed Use SAS SSDs, 16TB raw), a PERC H755 RAID controller, iDRAC9 for remote management, dual redundant hot-swap power supplies, and a rail kit for the rack enclosure below. Mixed Use drives, not Read Intensive — a deliberate choice to avoid betting on future write volume being low.</p>
+        <p>Every component, including the drives, is Dell-branded rather than third-party. Dell's ProSupport can decline to fully cover an issue if a non-Dell component is involved — a real risk for a solo IT person with no backup team to fall back on if something goes wrong. Staying all-Dell keeps the whole system under one support umbrella, worth the modest premium over mixing in cheaper third-party parts.</p>
       </div>
 
       <div class="section">
         <h3>A standby server — for hardware failure, not disaster</h3>
-        <p>A second, full copy of the database, kept continuously in sync with the primary via SQL Server's built-in Always On / log shipping features. If the primary fails or needs maintenance, staff can be pointed at the standby within minutes instead of waiting on a restore. Failover is a deliberate, manual action — simpler and cheaper to set up correctly than fully automatic failover, and appropriate for a company this size. Once the primary is repaired, the same reverse-sync pattern used for migration rollback (S-02) brings any changes made on the standby back to the primary.</p>
+        <p>A second, full copy of the database, same spec as the core server, kept continuously in sync via PostgreSQL's built-in streaming replication, managed with an open-source tool like Patroni or repmgr. If the primary fails or needs maintenance, staff can be pointed at the standby within minutes instead of waiting on a restore. Failover is a deliberate, manual action — simpler and cheaper to set up correctly than fully automatic failover, and appropriate for a company this size. Once the primary is repaired, the same reverse-sync pattern used for migration rollback (S-02) brings any changes made on the standby back to the primary.</p>
       </div>
 
       <div class="section">
         <h3>Staging/test server</h3>
-        <p>A smaller environment to safely validate each module's migration scripts before anything touches real, live data. Its job hasn't changed just because the production servers got bigger — it doesn't need to match their spec, only be realistic enough to catch real problems. A lower-spec physical server or a virtual machine on the core server both work; a VM is the more budget-friendly option now that the core server has real spare capacity to host one.</p>
+        <p>Runs as a virtual machine on the standby server, not the core server — the standby has the same full spec but is mostly idle, only replicating data rather than serving live queries. Running staging there gets the same $0 additional hardware cost as running it on the core server, without risking a heavy migration-script test competing for resources with real, live production traffic.</p>
       </div>
 
       <div class="section">
-        <h3>SQL Server licensing</h3>
-        <p>Missing from earlier drafts of this estimate — worth being direct about that. The standby design (manual failover, one database, no readable secondary) fits entirely within SQL Server Standard Edition's Basic Availability Group limits, so Enterprise Edition's far more expensive per-core licensing isn't required here. Standard Edition can also be licensed as Server + CAL — one server license plus one access license per named user — which is typically cheaper than per-core licensing for a company with a few dozen users rather than thousands. The staging server can run SQL Server Developer Edition at no cost, since it's legitimately non-production use.</p>
-      </div>
-
-      <div class="section">
-        <h3>Windows Server licensing — or avoid it entirely</h3>
-        <p>SQL Server needs an underlying operating system, and that's a separate license from SQL Server itself. If the servers run Windows Server (the natural pairing given the existing .NET stack), that's a real, additional cost per server. The alternative: SQL Server has run natively on Linux since 2017, fully supported — hosting on Linux instead removes this cost entirely. This is a genuine decision, not an automatic choice either way, since it also affects what your team is most familiar operating day to day.</p>
+        <h3>Database and OS licensing — $0</h3>
+        <p>The platform decision in S-01 pays off directly here. PostgreSQL is open-source, with no per-core or per-user licensing cost at all, on the primary, the standby, or staging. Pairing it with Linux (Ubuntu Server or Rocky Linux, both free) removes the operating system licensing cost as well — no Windows Server core packs, no CALs.</p>
       </div>
 
       <div class="section">
         <h3>Server rack &amp; hardware support</h3>
-        <p>Two more physical pieces that hadn't been accounted for. A 2U rackmount server needs an actual rack enclosure to sit in properly — for cooling, cable management, and physical security, not just convenience. Separately, the warranty that comes bundled with a new server isn't the same as an extended support contract (next-business-day parts replacement, phone support) — worth budgeting for a real multi-year support agreement rather than assuming the base warranty covers a production system indefinitely.</p>
+        <p>A 2U rackmount server needs an actual rack enclosure to sit in properly — for cooling, cable management, and physical security, not just convenience. Separately, ProSupport Plus with 4-Hour Mission Critical is the real support product behind the number below — 24x7 support with a guaranteed 4-hour on-site technician response, not just next-business-day parts replacement or the base warranty a server ships with. The breakdown: Dell's own published upgrade price for this tier is $4,939.38 for a 36-month term, which works out to $137.20/month, or roughly $1,650/year per server — landing very close to the number below.</p>
       </div>
 
       <table class="rolltable">
-        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Core server</td><td>Lenovo ThinkSystem SR650 V3 or Dell PowerEdge R750, 128GB RAM, RAID-10 SSD (8TB usable)</td><td>One-time</td><td>$8,200 – $14,000</td></tr>
-        <tr><td class="step">Standby server (HA)</td><td>Same class as core server, kept in sync via SQL Server Always On</td><td>One-time</td><td>$8,200 – $14,000</td></tr>
-        <tr><td class="step">Staging/test server</td><td>Lower-spec tower server, or a VM on the core server</td><td>One-time</td><td>$0 – $2,500</td></tr>
-        <tr><td class="step">SQL Server Standard — primary</td><td>Server + CAL licensing, ~20–40 named users</td><td>One-time</td><td>$5,000 – $10,500</td></tr>
-        <tr><td class="step">SQL Server Standard — standby</td><td>Server + CAL licensing</td><td>One-time</td><td>$5,000 – $10,500</td></tr>
-        <tr><td class="step">SQL Server Developer Edition — staging</td><td>Free for non-production use</td><td>One-time</td><td>$0</td></tr>
-        <tr><td class="step">Windows Server Standard — primary</td><td>16-core pack + CALs, or $0 if hosting on Linux instead</td><td>One-time</td><td>$1,200 – $3,000</td></tr>
-        <tr><td class="step">Windows Server Standard — standby</td><td>Same as above, or $0 on Linux</td><td>One-time</td><td>$1,200 – $3,000</td></tr>
-        <tr><td class="step">Server rack enclosure</td><td>12U–24U rack cabinet</td><td>One-time</td><td>$300 – $800</td></tr>
-        <tr><td class="step">Hardware support contract</td><td>Dell ProSupport / Lenovo Premier Support, core + standby</td><td>Recurring — yearly</td><td>$1,400 – $3,600</td></tr>
+        <tr><th>Item</th><th>Locked spec</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">Core server</td><td>Dell PowerEdge R760, 2x 16-core, 128GB DDR5 RAM (4x32GB), 8TB usable RAID-10 (Mixed Use SAS SSD), PERC H755, iDRAC9</td><td>One-time</td><td>$18,000</td></tr>
+        <tr><td class="step">Standby server (HA)</td><td>Identical spec to core server</td><td>One-time</td><td>$18,000</td></tr>
+        <tr><td class="step">Staging/test server</td><td>VM on the standby server</td><td>One-time</td><td>$0</td></tr>
+        <tr><td class="step">PostgreSQL — primary, standby &amp; staging</td><td>Open-source, no license cost</td><td>One-time</td><td>$0</td></tr>
+        <tr><td class="step">Linux OS — primary &amp; standby</td><td>Ubuntu Server or Rocky Linux, open-source, no license cost</td><td>One-time</td><td>$0</td></tr>
+        <tr><td class="step">Server rack enclosure</td><td>18U rack cabinet</td><td>One-time</td><td>$500</td></tr>
+        <tr><td class="step">Hardware support contract</td><td>Dell ProSupport Plus with 4-Hour Mission Critical, core + standby</td><td>Recurring — yearly</td><td>$3,600</td></tr>
       </table>
-      <p><b>Subtotal, this sheet:</b> roughly $29,100 – $58,300 one-time (or $26,700 – $52,300 if hosting on Linux instead of Windows Server), plus $1,400 – $3,600/year for hardware support.</p>
+      <p><b>Subtotal, this sheet:</b> $36,500 one-time, plus $3,600/year for hardware support. These are the planning figures to budget against — a formal vendor quote could land somewhat above or below this, and should be treated as the final word, not this estimate.</p>
 
       <div class="callout tech">
         <span class="tag"></span>
         <p>RAM headroom is the deliberate choice here, not overspending — a 2-socket server's real value is the ability to add capacity later without another hardware purchase and migration.</p>
       </div>
-      <div class="callout biz">
+      <div class="callout tech">
         <span class="tag"></span>
-        <p>Decide staging's approach — dedicated hardware or a VM on the core server — as a budget/isolation trade-off, not a technical necessity either way.</p>
-      </div>
-      <div class="callout biz">
-        <span class="tag"></span>
-        <p>Windows Server vs. Linux for hosting is worth a real conversation with Yvette — it changes a genuine cost line, not just a technical preference.</p>
-      </div>
-      <div class="callout risk">
-        <span class="tag"></span>
-        <p>Microsoft offers a licensing benefit that can waive the cost of a passive failover server entirely under certain Software Assurance terms — potentially reducing the standby license cost in the table above. This needs confirming with a licensing reseller before counting on it; the table above assumes it does not apply, as the safer planning number.</p>
-      </div>
-      <div class="callout risk">
-        <span class="tag"></span>
-        <p>The Windows Server figure above assumes a 16-core license covers the server. Windows Server licenses every physical core, so if the final CPU configuration has more than 16 total cores, additional core packs are needed — this number is a starting point, not a ceiling, until the exact CPU is chosen.</p>
+        <p>The $18,000 per-server figure is anchored to a real, sealed Dell OEM system quote for a comparable configuration (128GB RAM, ~16TB of premium drives), adjusted for the R760's larger 2-socket chassis versus SAS drives instead of NVMe — not raw component list pricing, which runs meaningfully higher than what real bundled quotes deliver. A formal Dell quote is the natural next step once the project is approved, and should land within about 10-15% of this number.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-01</span><span>CORE &amp; STAGING</span></div>
@@ -1169,40 +1150,36 @@
 
       <div class="section">
         <h3>Power protection</h3>
-        <p>Separate UPS units for the core and standby servers, each sized around 2200–3000VA, with a smaller unit covering staging and networking gear — keeping power protection independent across the critical machines.</p>
-      </div>
-
-      <div class="section">
-        <h3>Network &amp; remote access</h3>
-        <p>A firewall/VPN appliance (Ubiquiti UniFi Dream Machine Pro, or Fortinet FortiGate 60F) handling both perimeter security and secure remote access for field staff.</p>
+        <p>Separate UPS units for the core and standby servers, each an APC Smart-UPS SMT2200C (by Schneider Electric), plus a smaller APC Smart-UPS SMT1500C covering staging and networking gear — keeping power protection independent across the critical machines. Re-checked against the R760's actual power specs: a non-GPU configuration like ours realistically draws 200–400W, the same range this sizing was already built on, and the R760 is measurably more power-efficient per unit of work than the R750 it replaced — so no upgrade needed here after the server model change.</p>
+        <p>The SMT2200C carries a 3-year repair-or-replace warranty on the unit itself, a separate 2-year warranty on the battery, and a $150,000 Connected Equipment Protection Policy — APC's own guarantee against damage to equipment plugged into it if the UPS fails to do its job.</p>
       </div>
 
       <div class="section">
         <h3>Offsite backup</h3>
-        <p>A nightly backup routine with a copy stored off-site, protecting against site-level events a standby server can't cover.</p>
+        <p>A nightly backup routine to Backblaze B2 Cloud Storage, protecting against site-level events a standby server can't cover — priced per TB actually stored, not per computer, which fits a server backup far better than a workstation-oriented backup product. Sized for the server's full 8TB capacity, not just today's actual data usage, since that headroom exists partly for a future document archive that could genuinely fill it.</p>
       </div>
 
       <div class="section">
         <h3>AI feature usage</h3>
-        <p>Pay-per-use, scaling directly with actual usage.</p>
+        <p>Pay-per-use, scaling directly with actual usage — estimated for moderate use by ~20–40 staff.</p>
       </div>
 
       <table class="rolltable">
-        <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">UPS (3 units — core, standby, staging/network)</td><td>2x APC Smart-UPS 2200–3000VA, plus original 1500VA unit</td><td>One-time</td><td>$1,800 – $3,100</td></tr>
-        <tr><td class="step">VPN / firewall appliance</td><td>Ubiquiti UniFi Dream Machine Pro, or Fortinet FortiGate 60F</td><td>One-time</td><td>$300 – $600</td></tr>
-        <tr><td class="step">Firewall security subscription</td><td>Vendor threat-protection subscription</td><td>Recurring — yearly</td><td>$150 – $300</td></tr>
-        <tr><td class="step">Offsite backup service</td><td>Backblaze Business Backup, or B2 cloud storage</td><td>Recurring — monthly</td><td>$20 – $60</td></tr>
-        <tr><td class="step">AI feature usage</td><td>Hosted AI API, pay-per-use</td><td>Recurring — monthly</td><td>$50 – $200</td></tr>
-        <tr><td class="step">IT maintenance (if outsourced)</td><td>Local IT contractor / MSP retainer</td><td>Recurring — monthly</td><td>$0 – $600</td></tr>
+        <tr><th>Item</th><th>Locked spec</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><td class="step">UPS — core &amp; standby</td><td>2x APC Smart-UPS SMT2200C</td><td>One-time</td><td>$3,300</td></tr>
+        <tr><td class="step">UPS — staging/network</td><td>APC Smart-UPS SMT1500C</td><td>One-time</td><td>$770</td></tr>
+        <tr><td class="step">Offsite backup service</td><td>Backblaze B2 Cloud Storage, 8TB at $6/TB/month</td><td>Recurring — monthly</td><td>$48</td></tr>
+        <tr><td class="step">AI feature usage</td><td>Hosted AI API, pay-per-use</td><td>Recurring — monthly</td><td>$120</td></tr>
+        <tr><td class="step">IT maintenance</td><td>In-house (default) — or a local contractor/MSP retainer if outsourced</td><td>Recurring — monthly</td><td>$0, or $400 if outsourced</td></tr>
       </table>
-      <p><b>Subtotal, this sheet:</b> roughly $2,100 – $3,700 one-time, plus $70 – $260/month recurring before an outsourced IT retainer (up to $860/month if fully outsourced).</p>
-      <p><b>Combined total across INF-01 and INF-02:</b> roughly $31,200 – $62,000 one-time (or $28,800 – $56,000 if hosting on Linux instead of Windows Server), plus $70 – $260/month recurring before an outsourced IT retainer (up to $860/month if fully outsourced), plus $1,400 – $3,600/year for hardware support and $150 – $300/year for the firewall subscription.</p>
+      <p><b>Subtotal, this sheet:</b> $4,070 one-time, plus $168/month recurring (or $568/month if IT is outsourced). VPN/firewall pending the ISP bundling decision, not included above.</p>
+      <p><b>Combined total across INF-01 and INF-02:</b> $40,570 one-time, plus $168/month recurring (or $568/month if outsourced), plus $3,600/year for hardware support.</p>
 
-      <div class="callout tech">
+      <div class="callout biz">
         <span class="tag"></span>
-        <p>IT maintenance nudged up slightly from the earlier estimate — there's simply more physical hardware to monitor now (2 critical servers, a staging box, 3 UPS units) if that responsibility is ever outsourced rather than handled in-house.</p>
+        <p>Both the VPN and the firewall are the same physical device: a Ubiquiti UniFi Dream Machine Pro (UDM-Pro), roughly $400 one-time, plus the Ubiquiti CyberSecure subscription for ongoing threat signature updates, roughly $99/year. Since Swirnow is having a new internet connection installed, it's worth asking that provider directly whether this equipment can be bundled into the upgrade before buying it separately. Neither cost is included in the totals above, since it depends on that conversation.</p>
       </div>
+
       <div class="callout risk">
         <span class="tag"></span>
         <p>The standby server covers hardware failure, not site-level disaster. If the building has a fire, flood, or theft, both the primary and standby go down together since they're co-located — only the offsite backup plan actually survives that scenario, and only if it's tested regularly.</p>
@@ -1221,10 +1198,10 @@
         <h3>Security</h3>
         <ul>
           <li><b>Encryption in transit</b> — standard TLS/SSL between the browser, API, and database, using free certificates (Let's Encrypt)</li>
-          <li><b>Encryption at rest</b> — SQL Server's built-in Transparent Data Encryption (TDE), included with SQL Server, just needs to be turned on</li>
+          <li><b>Encryption at rest</b> — disk-level encryption (LUKS, standard on Linux), or PostgreSQL's pgcrypto extension for column-level encryption, both open-source and included</li>
           <li><b>Role-based access control</b> — enforced at the API layer (S-03): a sales rep's login only ever returns what a sales rep should see</li>
-          <li><b>Multi-factor authentication</b> — for VPN and admin logins, natively supported by the firewall appliance already in the plan</li>
-          <li><b>Patch management</b> — a real recurring schedule, tested on staging first before production</li>
+          <li><b>Multi-factor authentication</b> — for VPN and admin logins, natively supported by the UDM-Pro (INF-02) whether it's purchased separately or bundled through the new ISP</li>
+          <li><b>Patch management</b> — a real recurring schedule, tested on staging first before production, owned by whoever is doing IT day to day — currently a one-person responsibility, worth keeping realistic rather than assuming a team's worth of coverage</li>
           <li><b>A password/secrets manager</b> — real credential storage instead of anyone's notes or memory</li>
         </ul>
       </div>
@@ -1232,22 +1209,27 @@
       <div class="section">
         <h3>Monitoring</h3>
         <ul>
-          <li><b>Server health</b> — CPU, RAM, disk, uptime — built into both Lenovo (XClarity) and Dell (iDRAC) server management, no extra cost</li>
-          <li><b>Database monitoring</b> — SQL Server Agent, included with SQL Server, can alert on issues like low disk space automatically</li>
-          <li><b>Security monitoring</b> — intrusion detection (IDS/IPS) already included in the firewall appliance</li>
-          <li><b>Backup verification</b> — an automated alert confirming last night's backup actually completed, not just assumed</li>
+          <li><b>Server health</b> — CPU, RAM, disk, uptime — built into Dell's iDRAC9 on both the core and standby R760s, no extra cost</li>
+          <li><b>Database monitoring</b> — pg_cron or standard OS-level scheduled jobs on Linux, open-source, can alert on issues like low disk space automatically</li>
+          <li><b>Security monitoring</b> — intrusion detection (IDS/IPS) built into the UDM-Pro, same conditional status as MFA above — in place once the VPN/firewall question in INF-02 is resolved</li>
+          <li><b>Backup verification</b> — an automated alert confirming last night's B2 backup actually completed, not just assumed</li>
           <li><b>AI usage monitoring</b> — a spending cap and alert set with the AI provider, so a usage spike is a notification, not a surprise bill</li>
         </ul>
       </div>
 
       <table class="rolltable">
         <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Password/secrets manager</td><td>Bitwarden Business, or equivalent, ~20–40 users</td><td>Recurring — monthly</td><td>$60 – $320</td></tr>
+        <tr><td class="step">Password/secrets manager</td><td>Bitwarden Business, ~30 users at $5/user</td><td>Recurring — monthly</td><td>$150</td></tr>
       </table>
 
       <div class="callout tech">
         <span class="tag"></span>
-        <p>Almost none of this needs new purchased tools — SQL Server, the server hardware, and the firewall appliance already include what's needed. The real cost here is configuration discipline and a recurring schedule, not additional line items on the budget.</p>
+        <p>Almost none of this needs new purchased tools — PostgreSQL, Linux, the Dell R760 hardware, and (once resolved) the firewall appliance already include what's needed. The real cost here is configuration discipline and a recurring schedule, not additional line items on the budget.</p>
+      </div>
+
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>Two of the items above depend directly on the still-open VPN/firewall decision in INF-02 (MFA, intrusion detection). Worth resolving that conversation with the ISP before finalizing this sheet, since it changes whether these are already covered or still need a separate purchase.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-03</span><span>SECURITY &amp; MONITORING</span></div>
@@ -1266,25 +1248,25 @@
 
       <table class="rolltable">
         <tr><th>Item</th><th>Possible product</th><th>Type</th><th>Est. cost</th></tr>
-        <tr><td class="step">Laptop</td><td>Modern 8+ core CPU, 32GB RAM, 512GB–1TB SSD</td><td>One-time</td><td>$1,500 – $2,500</td></tr>
-        <tr><td class="step">External monitor(s)</td><td>27"+ QHD display</td><td>One-time</td><td>$250 – $450 each</td></tr>
+        <tr><td class="step">Laptop</td><td>Modern 8+ core CPU, 32GB RAM, 512GB–1TB SSD</td><td>One-time</td><td>$2,000</td></tr>
+        <tr><td class="step">External monitor</td><td>27"+ QHD display</td><td>One-time</td><td>$350</td></tr>
       </table>
 
       <div class="section">
         <h3>The full picture — time and cost together</h3>
-        <p>Every number from every sheet on this site, pulled into one place:</p>
+        <p>Every number from every sheet on this site, pulled into one place — single planning numbers, not ranges:</p>
         <table class="rolltable">
           <tr><th>Category</th><th>Total</th></tr>
           <tr><td class="step">Implementation timeline</td><td>9 – 12 months (see T-04)</td></tr>
-          <tr><td class="step">One-time investment, all infrastructure combined</td><td>$32,950 – $64,950<br><small style="font-weight:400;">($30,550 – $58,950 if hosting on Linux instead of Windows Server)</small></td></tr>
-          <tr><td class="step">Recurring monthly</td><td>$130 – $580<br><small style="font-weight:400;">(up to $1,180/month if IT support is fully outsourced)</small></td></tr>
-          <tr><td class="step">Recurring yearly</td><td>$1,550 – $3,900<br><small style="font-weight:400;">(hardware support + firewall subscription)</small></td></tr>
+          <tr><td class="step">One-time investment, all infrastructure combined</td><td>$42,920</td></tr>
+          <tr><td class="step">Recurring monthly</td><td>$318<br><small style="font-weight:400;">($718/month if IT support is outsourced)</small></td></tr>
+          <tr><td class="step">Recurring yearly</td><td>$3,600<br><small style="font-weight:400;">(hardware support — VPN/firewall subscription pending ISP decision)</small></td></tr>
         </table>
       </div>
 
       <div class="callout final grand-total">
         <span class="tag"></span>
-        <p>9 to 12 months, $32,950 to $64,950 one-time depending on OS choice, and under $1,200/month recurring for a fully redundant, on-premises system built to last — not the fastest number possible, but the one the business can actually plan around.</p>
+        <p>9 to 12 months, $42,920 one-time, and $318/month recurring (or $718/month if IT is outsourced) for a fully redundant, on-premises system built to last — a single planning number for a fully locked spec, not the fastest number possible, but the one the business can actually plan around.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW — INFRASTRUCTURE</span><span>SHEET INF-04</span><span>WORKSTATION</span></div>
