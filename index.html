@@ -535,7 +535,12 @@
 
     <div class="section">
       <h3>What exists today</h3>
-      <p>The current schema is sound in places. Contacts, companies, and activity all follow reasonable relational patterns. The problems are concentrated in two spots.</p>
+      <p>The current schema is sound in places. Contacts, companies, and activity all follow reasonable relational patterns. The problems are concentrated in three spots.</p>
+      <ul>
+        <li><b>Project ↔ Job overload</b>: a "Job" isn't a separate entity, it's a flag flip on the Projects table. Roughly 30 procurement/contract fields sit unused until that flag flips.</li>
+        <li><b>Repeating groups</b>: fields like <code>proLoadType1/2/3</code> and <code>proDeadAns1–7</code> hard-cap what should be an unlimited child list.</li>
+        <li><b>Activity scope creep</b>: the activity log carries product-sample fields (<code>actThickness</code>, <code>actPanelColor</code>) that only apply to one specific interaction type.</li>
+      </ul>
       <div class="diagram">
         <div class="dbox amber">dbo_tblProjects<br><small>1 table, 100+ fields</small></div>
         <div class="darrow">&#8594;</div>
@@ -543,12 +548,7 @@
         <div class="darrow">&#8594;</div>
         <div class="dbox amber">+30 contract fields<br><small>only used once proJob = -1</small></div>
       </div>
-      <div class="diagram-caption">Current state: Project and Job are the same table, distinguished only by a boolean flag</div>
-      <ul>
-        <li><b>Project ↔ Job overload</b>: a "Job" isn't a separate entity, it's a flag flip on the Projects table. Roughly 30 procurement/contract fields sit unused until that flag flips.</li>
-        <li><b>Repeating groups</b>: fields like <code>proLoadType1/2/3</code> and <code>proDeadAns1–7</code> hard-cap what should be an unlimited child list.</li>
-        <li><b>Activity scope creep</b>: the activity log carries product-sample fields (<code>actThickness</code>, <code>actPanelColor</code>) that only apply to one specific interaction type.</li>
-      </ul>
+      <div class="diagram-caption">Illustrating problem 1: Project and Job are the same table, distinguished only by a boolean flag</div>
     </div>
 
     <div class="section">
