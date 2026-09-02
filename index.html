@@ -505,7 +505,7 @@
     <p class="subhead">A phased plan to move the Master Matrix CRM off its legacy .NET and SQL Server foundation onto a modern, PostgreSQL-based, API-driven platform, and a look at what two decades of Swirnow's own project data can do once it's there. All without interrupting daily use by sales, project management, and back-office teams.</p>
     <div class="meta-row">
       <span><b>Project</b> &nbsp;Swirnow Building Systems: CRM Platform</span>
-      <span><b>Sheets</b> &nbsp;16 across 4 sections</span>
+      <span><b>Sheets</b> &nbsp;17 across 4 sections</span>
       <span><b>Status</b> &nbsp;Proposal for review</span>
     </div>
   </div>
@@ -1084,13 +1084,14 @@
       <button class="tab-btn" data-tab="ai3" role="tab" aria-selected="false"><span class="num">AI-03</span><span class="label">Win / Loss Patterns</span></button>
       <button class="tab-btn" data-tab="ai4" role="tab" aria-selected="false"><span class="num">AI-04</span><span class="label">Relationship Intel</span></button>
       <button class="tab-btn" data-tab="ai5" role="tab" aria-selected="false"><span class="num">AI-05</span><span class="label">Client Slow Spots</span></button>
+      <button class="tab-btn" data-tab="ai6" role="tab" aria-selected="false"><span class="num">AI-06</span><span class="label">2D to 3D Plans</span></button>
     </div>
 
     <div class="sheets">
 
     <!-- ===================== AI-01 - SIMILAR PROJECTS ===================== -->
     <section class="sheet active" id="ai1">
-      <div class="sheet-num">SHEET AI-01 / 05</div>
+      <div class="sheet-num">SHEET AI-01 / 06</div>
       <h2>Find Similar Past Jobs</h2>
       <p class="sheet-sub">Type in what a new project looks like, and instantly see every similar job Swirnow has done — going back decades.</p>
 
@@ -1114,7 +1115,7 @@
 
     <!-- ===================== AI-02 - PRICING BENCHMARK ===================== -->
     <section class="sheet" id="ai2">
-      <div class="sheet-num">SHEET AI-02 / 05</div>
+      <div class="sheet-num">SHEET AI-02 / 06</div>
       <h2>Smarter Pricing</h2>
       <p class="sheet-sub">Know instantly what similar past projects actually sold for, before a quote goes out the door.</p>
 
@@ -1133,7 +1134,7 @@
 
     <!-- ===================== AI-03 - WIN / LOSS PATTERNS ===================== -->
     <section class="sheet" id="ai3">
-      <div class="sheet-num">SHEET AI-03 / 05</div>
+      <div class="sheet-num">SHEET AI-03 / 06</div>
       <h2>Why Deals Win or Lose</h2>
       <p class="sheet-sub">Decades of "why we lost it" and "why we won it," turned into patterns leadership can actually act on.</p>
 
@@ -1156,7 +1157,7 @@
 
     <!-- ===================== AI-04 - RELATIONSHIP INTEL ===================== -->
     <section class="sheet" id="ai4">
-      <div class="sheet-num">SHEET AI-04 / 05</div>
+      <div class="sheet-num">SHEET AI-04 / 06</div>
       <h2>Spot Opportunities in Your Customers</h2>
       <p class="sheet-sub">See which customers might be ready to buy more, and which ones have quietly gone cold.</p>
 
@@ -1178,7 +1179,7 @@
 
     <!-- ===================== AI-05 - STAGE-DURATION FLAGS ===================== -->
     <section class="sheet" id="ai5">
-      <div class="sheet-num">SHEET AI-05 / 05</div>
+      <div class="sheet-num">SHEET AI-05 / 06</div>
       <h2>Know This Client's Slow Spots</h2>
       <p class="sheet-sub">Look at everything Swirnow has done with a client before, spot which steps always seem to take them longer, and prepare for it this time.</p>
 
@@ -1204,9 +1205,34 @@
       <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-05</span><span>CLIENT SLOW SPOTS</span></div>
     </section>
 
+    <!-- ===================== AI-06 - 2D TO 3D PLANS ===================== -->
+    <section class="sheet" id="ai6">
+      <div class="sheet-num">SHEET AI-06 / 06</div>
+      <h2>2D to 3D Floor Plans</h2>
+      <p class="sheet-sub">Take a flat structural layout and turn it into a 3D model a client or GC can actually look at, instead of a drawing they have to interpret.</p>
+
+      <div class="section">
+        <h3>What this fixes</h3>
+        <p>Structural floor system layouts (columns, beams, composite joists) are drawn flat today. Reading them takes training. A 3D model of the same layout is something anyone in the room can understand at a glance, whether that's a client, a GC, or a new estimator.</p>
+      </div>
+
+      <div class="section">
+        <h3>A working concept demo</h3>
+        <p>Built with sample data, not a real project, to show the idea concretely rather than just describe it. Drag to reveal the 2D plan turning into a 3D model, then rotate the model freely.</p>
+        <p><a href="floor-demo.html" target="_blank" style="display:inline-block;margin-top:6px;padding:12px 22px;background:var(--orange);color:var(--tag-light);text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;font-size:13px;">Open the demo &rarr;</a></p>
+      </div>
+
+      <div class="callout risk">
+        <span class="tag"></span>
+        <p>Whether this can work reliably depends on the source format. If real floor system layouts exist as structured CAD files (DWG/DXF), converting them to 3D is a solid, low-risk build. If they only exist as scanned or flattened drawings, AI-based 3D reconstruction is unreliable for anything load-bearing, and shouldn't be used without engineering review.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-06</span><span>2D TO 3D PLANS</span></div>
+    </section>
+
     </div>
   </div>
-  <footer class="page-footer">END OF SECTION: AI-01 THROUGH AI-05 | PREPARED FOR REVIEW</footer>
+  <footer class="page-footer">END OF SECTION: AI-01 THROUGH AI-06 | PREPARED FOR REVIEW</footer>
   </div>
 
 </div>
