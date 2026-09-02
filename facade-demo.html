@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Facade — Elevation to Render Concept</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink-deep:#0B1E30;
+    --ink-panel:#0F273D;
+    --line-blue:#8DBEE6;
+    --line-dim:#3C6889;
+    --terracotta:#B5502E;
+    --terracotta-lt:#C96A45;
+    --terracotta-dk:#8B3A20;
+    --paper:#F3EFE4;
+    --ink-text:#101F30;
+    --white:#EAF3FB;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--ink-deep);color:var(--white);font-family:'Space Grotesk',sans-serif;}
+  ::selection{background:var(--terracotta-lt);color:var(--ink-deep);}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  header.hero{padding:72px 0 40px; position:relative;}
+  .stamp{
+    position:absolute; top:28px; right:24px;
+    border:2px solid var(--terracotta-lt);
+    color:var(--terracotta-lt);
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; letter-spacing:1.5px;
+    padding:8px 12px; transform:rotate(6deg);
+    line-height:1.5; text-align:center;
+    background:rgba(201,106,69,0.08);
+  }
+  .kicker{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px; color:var(--line-blue);
+    letter-spacing:0.3px; margin:0 0 14px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:600;
+    font-size:clamp(32px,5vw,52px);
+    line-height:1.08;
+    margin:0 0 18px;
+    max-width:15ch;
+  }
+  h1 em{font-style:normal; color:var(--terracotta-lt);}
+  .sub{
+    font-size:16px; line-height:1.7;
+    color:#C6D6E6; max-width:56ch; margin:0;
+  }
+
+  section.compare{padding:20px 0 8px;}
+  .compare-frame{
+    position:relative; width:100%;
+    aspect-ratio:4/5;
+    max-height:640px;
+    margin:0 auto;
+    background:var(--ink-panel);
+    border:1px solid var(--line-dim);
+    border-radius:2px;
+    overflow:hidden;
+    cursor:ew-resize;
+    touch-action:none;
+  }
+  .layer{position:absolute; inset:0; width:100%; height:100%;}
+  .layer svg{width:100%; height:100%; display:block;}
+  #render-layer{clip-path:inset(0 50% 0 0);}
+  .drag-handle{
+    position:absolute; top:0; bottom:0; left:50%;
+    width:2px; background:var(--terracotta-lt);
+    transform:translateX(-50%); pointer-events:none;
+  }
+  .drag-handle::after{
+    content:""; position:absolute; top:50%; left:50%;
+    width:36px; height:36px; border-radius:50%;
+    background:var(--terracotta-lt); transform:translate(-50%,-50%);
+  }
+  .drag-handle::before{
+    content:"⟷"; position:absolute; top:50%; left:50%;
+    transform:translate(-50%,-52%);
+    color:var(--ink-deep); font-size:16px; font-weight:700; z-index:2;
+  }
+  .side-label{
+    position:absolute; top:16px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; letter-spacing:1px;
+    color:var(--line-blue);
+    background:rgba(11,30,48,0.55);
+    padding:5px 10px; pointer-events:none;
+  }
+  .side-label.render{color:#FBE4D6; background:rgba(139,58,32,0.55);}
+  .side-label.left{left:16px;}
+  .side-label.right{right:16px;}
+  .compare-caption{
+    text-align:center; font-family:'JetBrains Mono',monospace;
+    font-size:12px; color:#6E93B4; margin:14px 0 0; letter-spacing:0.3px;
+  }
+
+  section.materials{padding:70px 0 10px;}
+  section.materials h2{
+    font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:26px; margin:0 0 20px;
+  }
+  .swatch-row{display:flex; gap:16px; flex-wrap:wrap;}
+  .swatch{
+    flex:1 1 160px;
+    background:var(--ink-panel);
+    border:1px solid var(--line-dim);
+    padding:0;
+  }
+  .swatch-chip{height:70px; width:100%;}
+  .swatch-label{
+    padding:12px 14px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px; letter-spacing:0.4px; color:var(--line-blue);
+  }
+  .swatch-label b{display:block; color:var(--white); font-family:'Space Grotesk',sans-serif; font-size:14px; font-weight:500; margin-top:2px;}
+
+  section.legend{padding:70px 0 20px;}
+  section.legend h2{
+    font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:26px; margin:0 0 12px;
+  }
+  .legend-panel{background:var(--paper); color:var(--ink-text); border-radius:2px; padding:32px 34px;}
+  .legend-grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:22px 28px; margin:0 0 24px; padding:0; list-style:none;
+  }
+  .legend-grid li{border-left:3px solid var(--terracotta-dk); padding-left:12px;}
+  .legend-grid .term{
+    display:block; font-family:'JetBrains Mono',monospace; font-size:11px;
+    letter-spacing:0.5px; color:var(--terracotta-dk); margin-bottom:4px;
+  }
+  .legend-grid .val{display:block; font-size:15px; font-weight:500;}
+  .disclaimer{
+    font-size:13px; line-height:1.7; color:#4A5A68;
+    border-top:1px solid #D9D2BF; padding-top:16px; margin:0;
+  }
+
+  footer.footer-note{padding:70px 0 90px;}
+  footer.footer-note p{color:#8FA9C2; line-height:1.7; max-width:58ch; margin:0;}
+
+  @media (max-width:640px){
+    header.hero{padding:56px 0 28px;}
+    .stamp{position:static; display:inline-block; transform:rotate(-2deg); margin-bottom:18px;}
+    .compare-frame{aspect-ratio:3/4;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="stamp">CONCEPT&nbsp;MOCKUP<br>NOT&nbsp;AN&nbsp;ACTUAL&nbsp;AI&nbsp;RENDER</div>
+    <p class="kicker">Elevation drawing &rarr; rendered facade</p>
+    <h1>The same elevation, seen <em>rendered</em>.</h1>
+    <p class="sub">A sample Avenere Cladding elevation — drawn flat the way it's specified today, and shown as a rendered facade the way a client could actually see it before fabrication. Drag the divider below.</p>
+  </header>
+
+  <section class="compare">
+    <div class="compare-frame" id="compare-frame">
+      <div class="layer" id="draw-layer">
+        <svg viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="640" height="560" fill="#0F273D"></rect>
+          <g id="draw-dots"></g>
+
+          <!-- building outline -->
+          <rect x="90" y="70" width="460" height="400" fill="none" stroke="#EAF3FB" stroke-width="2"></rect>
+
+          <!-- grid + cells (generated by JS) -->
+          <g id="draw-cells"></g>
+          <g id="draw-grid" stroke="#3C6889" stroke-width="1"></g>
+
+          <!-- bubbles + dims (generated by JS) -->
+          <g id="draw-bubbles" font-family="JetBrains Mono, monospace" font-size="12" fill="#8DBEE6"></g>
+          <g id="draw-dims" font-family="JetBrains Mono, monospace" font-size="11" fill="#6E93B4" stroke="#3C6889" stroke-width="1"></g>
+        </svg>
+      </div>
+
+      <div class="layer" id="render-layer">
+        <svg viewBox="0 0 640 560" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#AFCFE3"></stop>
+              <stop offset="100%" stop-color="#E9F1F2"></stop>
+            </linearGradient>
+            <linearGradient id="panelGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#C96A45"></stop>
+              <stop offset="100%" stop-color="#A9482A"></stop>
+            </linearGradient>
+            <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#8FB7CE"></stop>
+              <stop offset="55%" stop-color="#456C82"></stop>
+              <stop offset="100%" stop-color="#2E4C5E"></stop>
+            </linearGradient>
+            <radialGradient id="groundShadow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#1C130E" stop-opacity="0.45"></stop>
+              <stop offset="100%" stop-color="#1C130E" stop-opacity="0"></stop>
+            </radialGradient>
+          </defs>
+          <rect x="0" y="0" width="640" height="560" fill="url(#sky)"></rect>
+          <ellipse cx="320" cy="486" rx="230" ry="26" fill="url(#groundShadow)"></ellipse>
+
+          <g id="render-cells"></g>
+          <g id="render-joints" stroke="#7A331C" stroke-width="1.4" opacity="0.65"></g>
+        </svg>
+      </div>
+
+      <div class="drag-handle" id="drag-handle"></div>
+      <div class="side-label left">ELEVATION DRAWING</div>
+      <div class="side-label right render">RENDERED FACADE</div>
+    </div>
+    <p class="compare-caption">Drag left / right to compare</p>
+  </section>
+
+  <section class="materials">
+    <h2>Sample materials</h2>
+    <div class="swatch-row">
+      <div class="swatch">
+        <div class="swatch-chip" style="background:linear-gradient(180deg,#C96A45,#A9482A);"></div>
+        <div class="swatch-label">PANEL — P1<b>NeaCera Terra-Cotta Rainscreen</b></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:linear-gradient(135deg,#8FB7CE,#2E4C5E);"></div>
+        <div class="swatch-label">GLAZING — W1<b>Curtain Wall Unit</b></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-chip" style="background:#0F273D; border-bottom:3px solid #7A331C;"></div>
+        <div class="swatch-label">JOINT<b>Open Reveal, 3/4"</b></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="legend">
+    <h2>Sample data used</h2>
+    <div class="legend-panel">
+      <ul class="legend-grid">
+        <li><span class="term">ELEVATION</span><span class="val">4 levels &times; 8 bays</span></li>
+        <li><span class="term">PANEL MODULE</span><span class="val">5'-0" &times; 8'-0" typical</span></li>
+        <li><span class="term">MATERIAL</span><span class="val">Terra-cotta rainscreen (sample tone)</span></li>
+        <li><span class="term">GLAZING</span><span class="val">Curtain wall, alternating bays</span></li>
+      </ul>
+      <p class="disclaimer">This is a stylized mockup built on placeholder dimensions and a hand-styled render, not an actual AI-generated image. It illustrates the idea of rendering an elevation photorealistically — a real version would feed the actual elevation drawing into a hosted AI image model, per project.</p>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <p>This applies to Avenere Cladding elevations specifically, since panel color, texture, and joint pattern are visible and meaningful. It doesn't extend to structural floor systems, since those elements are hidden inside the building once construction is complete.</p>
+  </footer>
+
+</div>
+
+<script>
+(function(){
+  const cols = 8, rows = 4;
+  const x0 = 90, y0 = 70, w = 460, h = 400;
+  const colW = w / cols, rowH = h / rows;
+
+  // window bays: pick a plausible pattern (bays 2,5 are glazing on every floor; ground floor bay 4 is glazing too)
+  function isWindow(c, r){
+    if(c === 2 || c === 5) return true;
+    if(r === rows - 1 && c === 4) return true;
+    return false;
+  }
+
+  // ---------- draw layer (technical elevation) ----------
+  const drawCells = document.getElementById('draw-cells');
+  const drawGrid = document.getElementById('draw-grid');
+  const drawDots = document.getElementById('draw-dots');
+
+  // dot texture background
+  for(let i=0;i<40;i++){
+    for(let j=0;j<40;j++){
+      if((i+j) % 3 !== 0) continue;
+      const c = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      c.setAttribute('cx', i*18); c.setAttribute('cy', j*18);
+      c.setAttribute('r', 1); c.setAttribute('fill', '#173A56');
+      drawDots.appendChild(c);
+    }
+  }
+
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cx = x0 + c*colW, cy = y0 + r*rowH;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x', cx); rect.setAttribute('y', cy);
+      rect.setAttribute('width', colW); rect.setAttribute('height', rowH);
+      rect.setAttribute('fill', isWindow(c,r) ? 'rgba(141,190,230,0.10)' : 'rgba(141,190,230,0.04)');
+      drawCells.appendChild(rect);
+
+      const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+      label.setAttribute('x', cx + colW/2); label.setAttribute('y', cy + rowH/2 + 4);
+      label.setAttribute('text-anchor','middle');
+      label.setAttribute('font-family','JetBrains Mono, monospace');
+      label.setAttribute('font-size','11');
+      label.setAttribute('fill', '#8DBEE6');
+      label.textContent = isWindow(c,r) ? 'W1' : 'P1';
+      drawCells.appendChild(label);
+    }
+  }
+
+  for(let c=0;c<=cols;c++){
+    const x = x0 + c*colW;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', x); line.setAttribute('x2', x);
+    line.setAttribute('y1', y0); line.setAttribute('y2', y0+h);
+    drawGrid.appendChild(line);
+  }
+  for(let r=0;r<=rows;r++){
+    const y = y0 + r*rowH;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', x0); line.setAttribute('x2', x0+w);
+    line.setAttribute('y1', y); line.setAttribute('y2', y);
+    drawGrid.appendChild(line);
+  }
+
+  const bubbles = document.getElementById('draw-bubbles');
+  for(let c=0;c<cols;c++){
+    const cx = x0 + c*colW + colW/2;
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    const circ = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circ.setAttribute('cx', cx); circ.setAttribute('cy', y0-24); circ.setAttribute('r', 11);
+    circ.setAttribute('fill', '#0F273D'); circ.setAttribute('stroke', '#8DBEE6'); circ.setAttribute('stroke-width','1.3');
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', cx); text.setAttribute('y', y0-20); text.setAttribute('text-anchor','middle');
+    text.textContent = String(c+1);
+    g.appendChild(circ); g.appendChild(text);
+    bubbles.appendChild(g);
+  }
+  const levels = ['LVL 4','LVL 3','LVL 2','LVL 1'];
+  for(let r=0;r<rows;r++){
+    const cy = y0 + r*rowH + rowH/2;
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', x0-14); text.setAttribute('y', cy+4); text.setAttribute('text-anchor','end');
+    text.setAttribute('font-size','10');
+    text.textContent = levels[r];
+    bubbles.appendChild(text);
+  }
+
+  const dims = document.getElementById('draw-dims');
+  const dimY = y0 + h + 26;
+  const dimLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+  dimLine.setAttribute('x1', x0); dimLine.setAttribute('x2', x0+w);
+  dimLine.setAttribute('y1', dimY); dimLine.setAttribute('y2', dimY);
+  dims.appendChild(dimLine);
+  const dimLabel = document.createElementNS('http://www.w3.org/2000/svg','text');
+  dimLabel.setAttribute('x', x0+w/2); dimLabel.setAttribute('y', dimY+16);
+  dimLabel.setAttribute('text-anchor','middle');
+  dimLabel.textContent = "8 BAYS @ 5'-0\" O.C.";
+  dims.appendChild(dimLabel);
+
+  // ---------- render layer (stylized photoreal mockup) ----------
+  const renderCells = document.getElementById('render-cells');
+  const renderJoints = document.getElementById('render-joints');
+  const jitter = [0.02,-0.015,0.01,-0.02,0.015,-0.01,0.02,-0.015];
+
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cx = x0 + c*colW, cy = y0 + r*rowH;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x', cx+1); rect.setAttribute('y', cy+1);
+      rect.setAttribute('width', colW-2); rect.setAttribute('height', rowH-2);
+      if(isWindow(c,r)){
+        rect.setAttribute('fill', 'url(#glassGrad)');
+      } else {
+        rect.setAttribute('fill', 'url(#panelGrad)');
+        rect.setAttribute('opacity', String(0.92 + jitter[(c+r) % jitter.length]));
+      }
+      renderCells.appendChild(rect);
+    }
+  }
+  for(let c=0;c<=cols;c++){
+    const x = x0 + c*colW;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', x); line.setAttribute('x2', x);
+    line.setAttribute('y1', y0); line.setAttribute('y2', y0+h);
+    renderJoints.appendChild(line);
+  }
+  for(let r=0;r<=rows;r++){
+    const y = y0 + r*rowH;
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1', x0); line.setAttribute('x2', x0+w);
+    line.setAttribute('y1', y); line.setAttribute('y2', y);
+    renderJoints.appendChild(line);
+  }
+
+  // ---------- drag reveal ----------
+  const frame = document.getElementById('compare-frame');
+  const renderLayer = document.getElementById('render-layer');
+  const handle = document.getElementById('drag-handle');
+  let dragging = false;
+
+  function setReveal(pct){
+    const clamped = Math.max(4, Math.min(96, pct));
+    renderLayer.style.clipPath = `inset(0 ${100-clamped}% 0 0)`;
+    handle.style.left = clamped + '%';
+  }
+  setReveal(50);
+
+  function pointerToPct(clientX){
+    const rect = frame.getBoundingClientRect();
+    return ((clientX - rect.left) / rect.width) * 100;
+  }
+  frame.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    setReveal(pointerToPct(e.clientX));
+    frame.setPointerCapture(e.pointerId);
+  });
+  frame.addEventListener('pointermove', (e) => { if(dragging) setReveal(pointerToPct(e.clientX)); });
+  frame.addEventListener('pointerup', () => dragging = false);
+  frame.addEventListener('pointercancel', () => dragging = false);
+})();
+</script>
+
+</body>
+</html>
