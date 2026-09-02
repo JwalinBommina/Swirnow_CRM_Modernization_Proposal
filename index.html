@@ -514,7 +514,7 @@
     <button class="group-tab active" data-group="migration">CRM Modernization</button>
     <button class="group-tab timeline-tab" data-group="timeline">Timeline &amp; Phasing</button>
     <button class="group-tab infra-tab" data-group="infra">Infrastructure</button>
-    <button class="group-tab ai-tab" data-group="ai">AI Opportunities</button>
+    <button class="group-tab ai-tab" data-group="ai">AI Use Cases</button>
   </div>
 
   <div class="group-panel active" id="group-migration">
@@ -717,7 +717,7 @@
     <div class="callout risk">
       <span class="tag"></span>
       <span class="label">Why this unlocks the AI ask</span>
-      <p>An AI agent should never query raw production SQL. Once it calls the same governed endpoints as the front end, "find similar past jobs" or "log this expense" becomes a safe, well-defined action instead of an open-ended risk. See the AI Opportunities tab for what this actually enables.</p>
+      <p>An AI agent should never query raw production SQL. Once it calls the same governed endpoints as the front end, "find similar past jobs" or "log this expense" becomes a safe, well-defined action instead of an open-ended risk. See the AI Roadmap tab for what this actually enables.</p>
       <p>The final, highest-stakes front-end cutover (Projects &amp; Jobs) is scheduled during the same low-activity freeze window as its data migration counterpart in S-02, so front end and data risk are retired together.</p>
     </div>
 
@@ -853,7 +853,7 @@
 
       <div class="section">
         <h3>The Limits of Parallel Work</h3>
-        <p>A single Product Manager can only work on one thing at a time. Training a module's users, coordinating a freeze window, and starting the next module's backend can all land in the same week, and each one needs dedicated attention. The calendar-time overlap described in T-01, where validation windows for different modules run in parallel, shortens the schedule without adding engineering capacity. It doesn't let two things get worked on at once; it just uses the calendar more efficiently.</p>
+        <p>The plan assumes one Product Manager, not a team. Training a module's users, coordinating a freeze window, and starting the next module's backend can all land in the same week, and each one needs dedicated attention. The calendar-time overlap described in T-01, where validation windows for different modules run in parallel, shortens the schedule without adding engineering capacity. It doesn't let two things get worked on at once; it just uses the calendar more efficiently.</p>
       </div>
 
       <div class="section">
@@ -1078,7 +1078,7 @@
 
 <div class="group-panel" id="group-ai">
   <div class="layout">
-    <div class="sheet-index" role="tablist" aria-label="AI opportunity sections">
+    <div class="sheet-index" role="tablist" aria-label="AI use case sections">
       <button class="tab-btn active" data-tab="ai1" role="tab" aria-selected="true"><span class="num">AI-01</span><span class="label">Similar Projects</span></button>
       <button class="tab-btn" data-tab="ai2" role="tab" aria-selected="false"><span class="num">AI-02</span><span class="label">Pricing Benchmark</span></button>
       <button class="tab-btn" data-tab="ai3" role="tab" aria-selected="false"><span class="num">AI-03</span><span class="label">Win / Loss Patterns</span></button>
@@ -1109,7 +1109,7 @@
         <p>This turns one person's memory into something the whole team can use. New hires get the same institutional knowledge instantly that used to take years to build up.</p>
       </div>
 
-      <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-01</span><span>SIMILAR PROJECTS</span></div>
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-01</span><span>SIMILAR PROJECTS</span></div>
     </section>
 
     <!-- ===================== AI-02 - PRICING BENCHMARK ===================== -->
@@ -1128,7 +1128,7 @@
         <p>Old prices need to be adjusted for inflation, since comparing a quote from today straight to a job from 15 years ago wouldn't be a fair comparison.</p>
       </div>
 
-      <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-02</span><span>PRICING BENCHMARK</span></div>
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-02</span><span>PRICING BENCHMARK</span></div>
     </section>
 
     <!-- ===================== AI-03 - WIN / LOSS PATTERNS ===================== -->
@@ -1151,7 +1151,7 @@
         <p>The pattern-finding itself is standard database analysis: grouping and comparing reasons across every project, run directly on Swirnow's own server. AI is only used at the very end, to turn the finding into a plain-language summary, or to help read reasons that were written as free text instead of picked from a fixed list.</p>
       </div>
 
-      <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-03</span><span>WIN / LOSS PATTERNS</span></div>
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-03</span><span>WIN / LOSS PATTERNS</span></div>
     </section>
 
     <!-- ===================== AI-04 - RELATIONSHIP INTEL ===================== -->
@@ -1173,7 +1173,7 @@
         <p>Decide who sees this: each Sales Rep for their own accounts, or leadership looking across the whole customer base. Both are useful, for different reasons.</p>
       </div>
 
-      <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-04</span><span>RELATIONSHIP INTEL</span></div>
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-04</span><span>RELATIONSHIP INTEL</span></div>
     </section>
 
     <!-- ===================== AI-05 - STAGE-DURATION FLAGS ===================== -->
@@ -1201,7 +1201,7 @@
         <p>Same mechanism as AI-03: comparing a client's stage timing against the norm is standard database analysis, with a Python script handling the more involved cross-referencing (client, stage, project type at once), all running on Swirnow's own server. AI only turns the finding into the plain-language heads-up the PM actually sees.</p>
       </div>
 
-      <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-05</span><span>CLIENT SLOW SPOTS</span></div>
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-05</span><span>CLIENT SLOW SPOTS</span></div>
     </section>
 
     </div>
@@ -1212,7 +1212,7 @@
 </div>
 
   <script>
-  // Group-level switcher (CRM Modernization vs AI Opportunities)
+  // Group-level switcher (CRM Modernization vs AI Roadmap)
   const groupTabs = document.querySelectorAll('.group-tab');
   const groupPanels = document.querySelectorAll('.group-panel');
   groupTabs.forEach(gt => {
