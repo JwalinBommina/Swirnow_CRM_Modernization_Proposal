@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jwalin Bommina — Candidate Spec Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep: #10233A;
+    --navy: #1B3A5C;
+    --navy-line: #2E5478;
+    --blue-line: #9FC4E8;
+    --blue-pale: #DCEBFA;
+    --paper: #F6F3EA;
+    --ink: #12161C;
+    --ink-soft: #4A5568;
+    --orange: #E8722C;
+    --orange-deep: #B8540F;
+    --gold: #D4A017;
+    --green: #3F7D4A;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'IBM Plex Mono', monospace;
+  }
+  .display{font-family:'Space Grotesk', sans-serif;}
+
+  /* ================= HERO ================= */
+  .hero{
+    background:var(--navy-deep);
+    background-image:
+      linear-gradient(var(--navy-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--navy-line) 1px, transparent 1px);
+    background-size:38px 38px;
+    padding:60px 24px 56px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    position:relative;
+  }
+  .hero-kicker{
+    font-size:12px;
+    letter-spacing:3px;
+    color:var(--blue-pale);
+    opacity:0.75;
+    margin-bottom:26px;
+    text-align:center;
+  }
+  .id-card{
+    width:420px;
+    max-width:92vw;
+    border:1.5px solid var(--blue-line);
+    border-radius:2px;
+    background:var(--navy);
+    color:var(--paper);
+    padding:26px 30px;
+    position:relative;
+    text-align:center;
+  }
+  .id-card .corner{position:absolute;width:9px;height:9px;border:1.5px solid var(--blue-line);}
+  .id-card .corner.tl{top:-1.5px;left:-1.5px;border-right:none;border-bottom:none;}
+  .id-card .corner.tr{top:-1.5px;right:-1.5px;border-left:none;border-bottom:none;}
+  .id-card .corner.bl{bottom:-1.5px;left:-1.5px;border-right:none;border-top:none;}
+  .id-card .corner.br{bottom:-1.5px;right:-1.5px;border-left:none;border-top:none;}
+  .spec-label{font-size:10px;letter-spacing:2px;color:var(--blue-pale);opacity:0.7;margin-bottom:14px;}
+  .id-card h1{font-size:32px;font-weight:600;margin:0 0 8px;letter-spacing:0.2px;}
+  .id-card .role{font-size:13px;color:var(--orange);letter-spacing:0.5px;margin-bottom:4px;}
+  .id-card .sub{font-size:11px;color:var(--blue-pale);opacity:0.75;}
+
+  /* ================= SECTIONS ================= */
+  .section{max-width:940px;margin:0 auto;padding:64px 24px;}
+  .section-kicker{
+    font-size:11px;
+    letter-spacing:2.5px;
+    color:var(--orange-deep);
+    margin-bottom:12px;
+  }
+  .section h2.display{
+    font-size:clamp(26px,3.4vw,36px);
+    font-weight:600;
+    margin:0 0 28px;
+    color:var(--navy);
+    max-width:680px;
+    line-height:1.2;
+  }
+  .prose p{
+    font-size:15px;
+    line-height:1.8;
+    color:var(--ink-soft);
+    max-width:700px;
+    margin:0 0 18px;
+  }
+  .prose b{color:var(--ink);}
+
+  /* ---- Skills grid (replaces the old flip card) ---- */
+  .skills-grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:2px;
+    background:var(--navy);
+    border:1.5px solid var(--navy);
+    margin-top:36px;
+  }
+  @media (max-width:820px){
+    .skills-grid{grid-template-columns:1fr;}
+  }
+  .skill-card{
+    background:var(--paper);
+    padding:22px 20px;
+  }
+  .skill-card-label{font-size:9.5px;letter-spacing:1.5px;color:var(--orange-deep);font-weight:700;margin-bottom:10px;}
+  .skill-list{margin:0;padding:0;list-style:none;font-size:12.5px;line-height:1.75;color:var(--ink-soft);}
+  .skill-list li{padding-left:12px;position:relative;}
+  .skill-list li::before{content:"·";position:absolute;left:0;color:var(--orange);font-weight:700;}
+
+  .role-diagram{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:2px;
+    background:var(--navy);
+    border:1.5px solid var(--navy);
+    margin-top:36px;
+  }
+  @media (max-width:820px){
+    .role-diagram{grid-template-columns:1fr;}
+  }
+  .role-box{
+    background:var(--paper);
+    padding:22px 18px;
+    text-align:center;
+  }
+  .role-box-label{
+    font-size:10px;
+    letter-spacing:1.5px;
+    color:var(--orange-deep);
+    font-weight:700;
+    margin-bottom:14px;
+    line-height:1.5;
+  }
+  .role-box-highlight{
+    font-size:12.5px;
+    line-height:1.6;
+    color:var(--ink-soft);
+  }
+
+  .why-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+    background:var(--navy);
+    border:1.5px solid var(--navy);
+    margin-top:36px;
+  }
+  @media (max-width:700px){
+    .why-grid{grid-template-columns:1fr;}
+  }
+  .why-card{
+    background:var(--paper);
+    padding:24px 22px;
+  }
+  .why-card .num{font-family:'Space Grotesk',sans-serif;font-size:12px;color:var(--orange);font-weight:700;letter-spacing:1px;margin-bottom:10px;}
+  .why-card h3{font-family:'Space Grotesk',sans-serif;font-size:16px;margin:0 0 8px;color:var(--navy);}
+  .why-card p{font-size:12.5px;line-height:1.65;color:var(--ink-soft);margin:0;}
+
+  /* ================= SALARY ================= */
+  .salary-section{background:var(--navy-deep);color:var(--paper);}
+  .salary-section .section-kicker{color:var(--orange);}
+  .salary-section h2.display{color:var(--paper);}
+  .salary-section .prose p{color:var(--blue-pale);}
+  .salary-section .prose b{color:var(--paper);}
+
+  .rate-strip{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1px;
+    background:var(--navy-line);
+    border:1.5px solid var(--navy-line);
+    margin:36px 0;
+  }
+  @media (max-width:700px){
+    .rate-strip{grid-template-columns:1fr;}
+  }
+  .rate-card{
+    background:var(--navy);
+    padding:20px 16px;
+    text-align:center;
+  }
+  .rate-role{font-size:10px;letter-spacing:1px;color:var(--blue-pale);opacity:0.75;margin-bottom:10px;line-height:1.5;}
+  .rate-num{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:600;color:var(--paper);margin-bottom:4px;}
+  .rate-sub{font-size:10px;color:var(--blue-pale);opacity:0.6;}
+
+  .sum-line{
+    text-align:center;
+    margin:22px 0 40px;
+    font-size:13px;
+    color:var(--blue-pale);
+    line-height:2;
+  }
+  .sum-total{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:20px;
+    font-weight:700;
+    color:var(--paper);
+    display:block;
+    margin-top:8px;
+  }
+
+  .ask-box{
+    border:2px solid var(--orange);
+    padding:30px 28px;
+    text-align:center;
+    margin-top:8px;
+  }
+  .ask-label{font-size:10.5px;letter-spacing:2px;color:var(--orange);margin-bottom:10px;}
+  .ask-num{font-family:'Space Grotesk',sans-serif;font-size:clamp(34px,5vw,48px);font-weight:700;color:var(--paper);margin-bottom:6px;}
+  .ask-target{font-size:12.5px;color:var(--blue-pale);}
+  .ask-note{font-size:12px;color:var(--blue-pale);opacity:0.8;max-width:560px;margin:16px auto 0;line-height:1.7;}
+
+  /* ================= TABS ================= */
+  .tab-section{padding-top:48px;}
+  .tab-nav{
+    display:flex;
+    gap:0;
+    border-bottom:2px solid var(--navy);
+    margin-bottom:36px;
+  }
+  .tab-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:1.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    background:transparent;
+    border:none;
+    padding:14px 22px;
+    cursor:pointer;
+    position:relative;
+    top:2px;
+  }
+  .tab-btn.active{
+    color:var(--navy);
+    border-bottom:2px solid var(--orange);
+  }
+  .tab-btn:hover:not(.active){color:var(--navy);}
+  .tab-panel{display:none;}
+  .tab-panel.active{display:block;}
+
+  /* ================= VISA ================= */
+  .visa-steps{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:2px;
+    background:var(--navy);
+    border:1.5px solid var(--navy);
+    margin:36px 0;
+  }
+  @media (max-width:700px){
+    .visa-steps{grid-template-columns:1fr;}
+  }
+  .visa-step{
+    background:var(--paper);
+    padding:24px 22px;
+  }
+  .visa-step .step-tag{
+    font-size:10px;
+    letter-spacing:1.5px;
+    color:var(--orange-deep);
+    font-weight:700;
+    margin-bottom:10px;
+  }
+  .visa-step h3{font-family:'Space Grotesk',sans-serif;font-size:16px;margin:0 0 8px;color:var(--navy);}
+  .visa-step p{font-size:12.5px;line-height:1.65;color:var(--ink-soft);margin:0;}
+
+  .visa-note{
+    border-left:3px solid var(--green);
+    padding:14px 20px;
+    margin:8px 0 36px;
+    background:rgba(63,125,74,0.06);
+  }
+  .visa-note p{font-size:13px;line-height:1.7;color:var(--ink-soft);margin:0;}
+  .visa-note b{color:var(--ink);}
+
+  .visa-timeline{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:1px;
+    background:var(--navy-line);
+    border:1.5px solid var(--navy-line);
+    margin:0 0 20px;
+  }
+  @media (max-width:820px){
+    .visa-timeline{grid-template-columns:1fr;}
+  }
+  .visa-phase{
+    background:var(--navy);
+    padding:18px 14px;
+  }
+  .visa-phase .phase-date{font-size:10px;letter-spacing:1px;color:var(--orange);opacity:0.9;margin-bottom:8px;}
+  .visa-phase .phase-desc{font-size:11.5px;line-height:1.6;color:var(--blue-pale);}
+
+  .visa-footnote{font-size:11px;line-height:1.7;color:var(--ink-soft);opacity:0.85;max-width:700px;margin-top:8px;}
+
+  .rate-strip-tiered{
+    background:var(--navy-line);
+    border:1.5px solid var(--navy-line);
+    margin:36px 0;
+  }
+  .rate-row-top{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:1px;
+  }
+  .rate-row-bottom{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:1px;
+    margin-top:1px;
+  }
+  @media (max-width:700px){
+    .rate-row-top{grid-template-columns:1fr;}
+    .rate-row-bottom{grid-template-columns:1fr;}
+  }
+  .rate-card.primary{
+    padding:30px 16px;
+  }
+  .rate-card.primary .rate-num{font-size:24px;}
+  .rate-card.primary .rate-role{font-size:11px;}
+
+  .sum-line.light{color:var(--ink-soft);}
+  .sum-total.light{color:var(--navy);}
+  .ask-num.light{color:var(--navy);}
+  .ask-target.light{color:var(--ink-soft);}
+  .ask-note.light{color:var(--ink-soft);opacity:1;}
+
+  footer{
+    text-align:center;
+    padding:36px 24px 50px;
+    font-size:11px;
+    letter-spacing:1px;
+    color:var(--ink-soft);
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <div class="hero-kicker display">CANDIDATE SPEC SHEET &nbsp;·&nbsp; SWIRNOW BUILDING SYSTEMS &nbsp;·&nbsp; AI-NATIVE TECHNICAL LEAD ROLE</div>
+    <div class="id-card">
+      <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+      <div class="spec-label">CANDIDATE</div>
+      <h1 class="display">Jwalin Bommina</h1>
+      <div class="role">MS COMPUTER SCIENCE &nbsp;·&nbsp; 3 YEARS EXPERIENCE</div>
+      <div class="sub">Software Engineering · Technical Product · Database · Systems · Data</div>
+    </div>
+  </div>
+
+  <div class="section tab-section">
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="why">WHY THIS ROLE</button>
+      <button class="tab-btn" data-tab="visa">VISA &amp; WORK AUTH</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-why">
+      <h2 class="display">Five disciplines, one role.</h2>
+      <div class="prose">
+        <p>The role spans five disciplines that would normally be five separate hires. Here's what each one looked like in the proposal actually built for this process.</p>
+      </div>
+
+      <div class="role-diagram">
+        <div class="role-box">
+          <div class="role-box-label">SOFTWARE<br>ENGINEERING</div>
+          <div class="role-box-highlight">Owns the backend and API layer end-to-end</div>
+        </div>
+        <div class="role-box">
+          <div class="role-box-label">TECHNICAL<br>PRODUCT MGMT</div>
+          <div class="role-box-highlight">Plans the phased rollout, sequenced by risk</div>
+        </div>
+        <div class="role-box">
+          <div class="role-box-label">DATABASE<br>ADMINISTRATION</div>
+          <div class="role-box-highlight">Designs the schema, writes the migration plan</div>
+        </div>
+        <div class="role-box">
+          <div class="role-box-label">IT SYSTEMS<br>ADMINISTRATION</div>
+          <div class="role-box-highlight">Specs the server infrastructure, built for HA (High Availability)</div>
+        </div>
+        <div class="role-box">
+          <div class="role-box-label">DATA<br>ANALYSIS</div>
+          <div class="role-box-highlight">Builds the pricing &amp; win/loss analysis pipeline</div>
+        </div>
+      </div>
+
+      <h2 class="display" style="margin-top:56px;">Five disciplines, one person.</h2>
+      <div class="prose">
+        <p>The specific tools and depth behind each box above, what actually gets used day to day.</p>
+      </div>
+      <div class="skills-grid">
+        <div class="skill-card">
+          <div class="skill-card-label">SOFTWARE ENGINEERING</div>
+          <ul class="skill-list">
+            <li>Python, SQL, REST API design</li>
+            <li>Full-stack: backend, API layer, front-end integration</li>
+            <li>AI-assisted development (Claude Code, Cursor)</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-label">TECHNICAL PRODUCT MGMT</div>
+          <ul class="skill-list">
+            <li>Requirements discovery &amp; stakeholder interviews</li>
+            <li>Phased rollout planning, risk sequencing</li>
+            <li>Technical proposal writing &amp; presentation</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-label">DATABASE ADMINISTRATION</div>
+          <ul class="skill-list">
+            <li>Schema design &amp; normalization</li>
+            <li>Live migration strategy: CDC (Change Data Capture), reconciliation, rollback</li>
+            <li>PostgreSQL, replication &amp; high availability</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-label">IT SYSTEMS ADMINISTRATION</div>
+          <ul class="skill-list">
+            <li>Linux server administration, remote management</li>
+            <li>Infrastructure planning: HA (High Availability), backup, security</li>
+            <li>Vendor &amp; hardware procurement evaluation</li>
+          </ul>
+        </div>
+        <div class="skill-card">
+          <div class="skill-card-label">DATA ANALYSIS</div>
+          <ul class="skill-list">
+            <li>Pattern-finding: win/loss, pricing, client behavior</li>
+            <li>Python-based analysis pipelines</li>
+            <li>Translating findings into plain-language decisions</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="salary-block">
+        <h2 class="display" style="color:var(--navy); margin-top:56px;">Why the number is what it is.</h2>
+        <div class="prose">
+          <p>One person covering all five disciplines removes the coordination cost that normally sits between separate hires, no handoffs, no five sets of context to keep in sync. Here's what each of those roles goes for separately at 2026 US market rates (Glassdoor, ZipRecruiter, Salary.com):</p>
+        </div>
+
+        <div class="rate-strip-tiered">
+          <div class="rate-row-top">
+            <div class="rate-card primary">
+              <div class="rate-role">SOFTWARE<br>ENGINEER</div>
+              <div class="rate-num display">$110–135K</div>
+              <div class="rate-sub">market avg</div>
+            </div>
+            <div class="rate-card primary">
+              <div class="rate-role">TECHNICAL<br>PRODUCT MGR</div>
+              <div class="rate-num display">$115–145K</div>
+              <div class="rate-sub">market avg</div>
+            </div>
+          </div>
+          <div class="rate-row-bottom">
+            <div class="rate-card">
+              <div class="rate-role">DATABASE<br>ADMIN</div>
+              <div class="rate-num display">$95–115K</div>
+              <div class="rate-sub">market avg</div>
+            </div>
+            <div class="rate-card">
+              <div class="rate-role">IT SYSTEMS<br>ADMIN</div>
+              <div class="rate-num display">$75–90K</div>
+              <div class="rate-sub">market avg</div>
+            </div>
+            <div class="rate-card">
+              <div class="rate-role">DATA<br>ANALYST</div>
+              <div class="rate-num display">$75–95K</div>
+              <div class="rate-sub">market avg</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sum-line light">
+          $110–135K + $115–145K + $95–115K + $75–90K + $75–95K
+          <span class="sum-total light">≈ $470–580K combined market value, hired separately</span>
+        </div>
+
+        <div class="ask-box light">
+          <div class="ask-label">MY ASK</div>
+          <div class="ask-num display light">$125K – $135K</div>
+          <div class="ask-target light">Target: $130K</div>
+          <div class="ask-note light">Not a claim of five people's throughput, a claim of no coordination tax. I'm open to talking through how you're thinking about the number too.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="tab-visa">
+      <h2 class="display">Simple now, self-sufficient later.</h2>
+      <div class="prose">
+        <p>Currently authorized to work in the US under F-1 STEM OPT through <b>October 11, 2027</b>. That means no H-1B lottery, no immediate visa petition, and no long-term immigration commitment required to hire now. What's needed near-term is two standard, low-friction compliance steps:</p>
+      </div>
+
+      <div class="visa-steps">
+        <div class="visa-step">
+          <div class="step-tag">STEP 1</div>
+          <h3>E-Verify enrollment</h3>
+          <p>A free federal system. The employer creates an account, signs the standard memorandum of understanding, and completes a ~1-hour tutorial. No government fee, no immigration filing, just standard HR onboarding.</p>
+        </div>
+        <div class="visa-step">
+          <div class="step-tag">STEP 2</div>
+          <h3>Form I-983 training plan</h3>
+          <p>Not a petition to USCIS. A signed document confirming the role relates to my degree and the company provides structured training. I'd coordinate this with my university's international office and handle the reporting calendar.</p>
+        </div>
+      </div>
+
+      <div class="visa-note">
+        <p><b>Bottom line for now:</b> the employer's ask is enrolling in E-Verify and signing one training-plan form, then employing me under existing authorization already in place through Oct 2027.</p>
+      </div>
+
+      <div class="prose">
+        <p>The path after that is the <b>O-1A visa</b>, for individuals with extraordinary ability, built on demonstrated impact rather than a random lottery. As a founding/lead technical hire, the role naturally creates the kind of documented work (architecture decisions, infrastructure ownership, measurable impact) that supports a strong O-1A case, filed well before STEM OPT expires.</p>
+      </div>
+
+      <div class="visa-timeline">
+        <div class="visa-phase">
+          <div class="phase-date display">JUL–SEP '26</div>
+          <div class="phase-desc">E-Verify + I-983 onboarding, formalize role scope</div>
+        </div>
+        <div class="visa-phase">
+          <div class="phase-date display">OCT '26–FEB '27</div>
+          <div class="phase-desc">Build documented technical impact, evidence file</div>
+        </div>
+        <div class="visa-phase">
+          <div class="phase-date display">MAR '27</div>
+          <div class="phase-desc">Formal O-1A readiness review with counsel</div>
+        </div>
+        <div class="visa-phase">
+          <div class="phase-date display">SPRING '27</div>
+          <div class="phase-desc">Prepare petition, gather company documentation</div>
+        </div>
+        <div class="visa-phase">
+          <div class="phase-date display">BY OCT '27</div>
+          <div class="phase-desc">File O-1A petition ahead of STEM OPT expiration</div>
+        </div>
+      </div>
+
+      <p class="visa-footnote">This is a planning overview, not legal advice. Filing and compliance decisions would be confirmed with the company's immigration counsel.</p>
+    </div>
+  </div>
+
+  <footer>
+    JWALIN BOMMINA &nbsp;·&nbsp; PREPARED FOR SWIRNOW BUILDING SYSTEMS &nbsp;·&nbsp; CANDIDATE MATERIALS
+  </footer>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var target = btn.getAttribute('data-tab');
+        document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+        document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+        btn.classList.add('active');
+        document.getElementById('tab-' + target).classList.add('active');
+      });
+    });
+  </script>
+
+</body>
+</html>
