@@ -283,6 +283,7 @@
   .callout.final.grand-total .tag::before{content:"GRAND TOTAL";}
   .callout.final p{font-size:15px;font-weight:600;}
   .callout p{color:var(--ink);margin:0;}
+  .callout p + p{margin-top:12px;}
 
   /* ---------- Diagrams ---------- */
   .diagram{
@@ -534,7 +535,7 @@
 
     <div class="section">
       <h3>What exists today</h3>
-      <p>The current schema is sound in places: contacts, companies, and activity all follow reasonable relational patterns. The problems are concentrated in two spots, both the result of extending the system reactively over ~20 years rather than remodeling it.</p>
+      <p>The current schema is sound in places. Contacts, companies, and activity all follow reasonable relational patterns. The problems are concentrated in two spots.</p>
       <div class="diagram">
         <div class="dbox amber">dbo_tblProjects<br><small>1 table, 100+ fields</small></div>
         <div class="darrow">&#8594;</div>
@@ -560,7 +561,7 @@
         <div class="dbox accent">JobDetails<br><small>1:1, only exists once contracted</small></div>
       </div>
       <div class="diagram-caption">Proposed: lifecycle modeled as state history, not a boolean</div>
-      <p>The repeating load-type and question fields move into proper child tables keyed back to the project, removing the artificial 3-item / 7-item caps. The activity log gets a companion <code>ActivitySampleRequest</code> table so the core log stays generic again. Confirmed with DJ: once a Project becomes a Job, it never reverts back: the lifecycle model only needs to support forward progression, which simplifies the design.</p>
+      <p>The repeating load-type and question fields move into proper child tables keyed back to the project, removing the artificial 3-item / 7-item caps. The activity log gets a companion <code>ActivitySampleRequest</code> table so the core log stays generic again. Confirmed with DJ that once a Project becomes a Job, it never reverts back. The lifecycle model only needs to support forward progression, which simplifies the design.</p>
     </div>
 
     <div class="section">
@@ -573,18 +574,18 @@
         <li style="font-size:15.5px;line-height:1.7;color:var(--ink-soft);margin-bottom:8px;"><b>Front end</b>: once the API works, build the new Contacts screens against it</li>
         <li style="font-size:15.5px;line-height:1.7;color:var(--ink-soft);margin-bottom:8px;"><b>Freeze &amp; cutover</b>: one short scheduled pause, writes point at the new database, the new front end goes live for Contacts specifically</li>
       </ol>
-      <p>Then the entire cycle repeats for the next module: full detail on module order and pacing is in S-02.</p>
+      <p>Then the entire cycle repeats for the next module. Full detail on module order and pacing is in S-02.</p>
     </div>
 
     <div class="callout tech">
       <span class="tag"></span>
       <span class="label">Technical decision</span>
-      <p>The current Master Matrix database is a legacy schema that's carried Access-era conventions (like the -1/0 boolean flags) for roughly two decades. The redesign moves to PostgreSQL, hosted on Linux: open-source, no licensing cost, and a natural fit given the app layer is being rebuilt from scratch rather than staying close to the legacy .NET shape. That's the condition under which moving off SQL Server actually pays off, and it's the condition this project meets.</p>
+      <p>The current Master Matrix database is a legacy schema that's carried Access-era conventions (like the -1/0 boolean flags) for roughly two decades. The redesign moves to PostgreSQL, hosted on Linux. Both are open-source, with no licensing cost, and a natural fit given the app layer is being rebuilt from scratch rather than staying close to the legacy .NET shape. That's the condition under which moving off SQL Server actually pays off, and it's the condition this project meets.</p>
     </div>
     <div class="callout risk">
       <span class="tag"></span>
       <span class="label">Known limitation</span>
-      <p>Historical Project&rarr;Job transition dates were never captured: only the current flag state. Migration can backfill a single snapshot per record, not a true history. Future transitions will be fully timestamped going forward.</p>
+      <p>Historical Project&rarr;Job transition dates were never captured, only the current flag state. Migration can backfill a single snapshot per record, not a true history. Future transitions will be fully timestamped going forward.</p>
     </div>
 
     <div class="sheet-footer"><span>SWIRNOW | CRM MODERNIZATION</span><span>SHEET S-01</span><span>DATABASE STRUCTURE</span></div>
@@ -597,12 +598,12 @@
     <p class="sheet-sub">The system is used every day. The plan keeps it fully operational throughout, and lets us prove the new platform works before anyone's workflow depends on it.</p>
 
     <div class="section">
-      <h3>Approach: continuous sync, not a cutover night</h3>
+      <h3>A continuous sync, not a cutover night</h3>
       <p>Rather than a single high-risk migration event, the old database stays live and authoritative while a change-capture process continuously mirrors every update into the new, redesigned schema in the background.</p>
       <div class="diagram">
         <div class="dbox accent">Legacy SQL Server<br><small>stays live &amp; authoritative</small></div>
         <div class="darrow">&#8594;</div>
-        <div class="dbox">Change Data Capture<br><small>streams every insert/update</small></div>
+        <div class="dbox">Change Data Capture (CDC)<br><small>streams every insert/update</small></div>
         <div class="darrow">&#8594;</div>
         <div class="dbox accent">New Database<br><small>redesigned schema, validated in parallel</small></div>
       </div>
@@ -610,7 +611,7 @@
     </div>
 
     <div class="section">
-      <h3>Rollout order: lowest risk first</h3>
+      <h3>Rollout order, lowest risk first</h3>
       <table class="rolltable">
         <tr><th>Order</th><th>Module</th><th>Weeks</th><th>Why this position</th><th>Risk</th></tr>
         <tr><td class="step">1</td><td>Contacts &amp; Company</td><td>5–6</td><td>Few dependencies, easy to validate independently</td><td><span class="risk-chip low">Low</span></td></tr>
@@ -626,24 +627,24 @@
       <ul>
         <li><b>Initial bulk copy</b>: a one-time transformation pass moves everything that already exists in the old table into the new, redesigned schema for that module.</li>
         <li><b>CDC + continuous reconciliation take over from there</b>: CDC watches the old database's transaction log and automatically mirrors every live change into the new database from that point forward, while reconciliation runs continuously alongside it, comparing record counts and checksums between both systems and alerting on any drift rather than relying on a one-time check.</li>
-        <li><b>Rollback safety net: two possible ways to build it.</b> Once a module cuts over, the old database needs to stay caught up in case a rollback is ever needed. Same two options as before apply here, just in reverse: <b>reverse CDC</b> (infrastructure mirrors changes from the new database back to the old one automatically) or <b>dual-write</b> (application code explicitly writes to both). <b>We use reverse CDC</b>: same reasoning as the forward direction: no application write logic to touch, and no risk of two writes disagreeing mid-transaction if one succeeds and the other fails.</li>
+        <li><b>Rollback safety net: two possible ways to build it.</b> Once a module cuts over, the old database needs to stay caught up in case a rollback is ever needed. Same two options as before apply here, just in reverse: <b>reverse CDC</b> (infrastructure mirrors changes from the new database back to the old one automatically) or <b>dual-write</b> (application code explicitly writes to both). <b>We use reverse CDC</b>, for the same reasoning as the forward direction: no application write logic to touch, and no risk of two writes disagreeing mid-transaction if one succeeds and the other fails.</li>
       </ul>
     </div>
 
     <div class="callout tech">
       <span class="tag"></span>
       <span class="label">Technical decision</span>
-      <p>Why freeze is still needed even with CDC and reconciliation running: CDC always has a small amount of replication lag, a fraction of a second to a few seconds. A freeze is a short, planned pause that lets that lag drain to zero before writes are pointed at the new database, closing the one window where a write could otherwise be lost.</p>
+      <p>Freeze is still needed even with CDC and reconciliation running, because CDC always carries a small amount of replication lag, a fraction of a second to a few seconds. A freeze is a short, planned pause that lets that lag drain to zero before writes are pointed at the new database, closing the one window where a write could otherwise be lost.</p>
     </div>
     <div class="callout biz">
       <span class="tag"></span>
       <span class="label">Business decision</span>
-      <p>Define an acceptable freeze window for the final, highest-risk cutover (Projects &amp; Jobs) (e.g. end-of-day Friday rather than mid-week) and agree on how far in advance sales reps and PMs are told their module is changing underneath them.</p>
+      <p>Define an acceptable freeze window for the final, highest-risk cutover (Projects &amp; Jobs) (e.g. end-of-day Friday rather than mid-week) and agree on how far in advance Sales Reps and PMs are told their module is changing underneath them.</p>
     </div>
     <div class="callout risk">
       <span class="tag"></span>
       <span class="label">Worth holding firm on</span>
-      <p>No module is considered "cut over" until the reconciliation job has run clean for an agreed validation window. Calendar time here is the honest cost of doing this safely: it is not something to compress to hit an arbitrary date. Within each module, the sequence is backend &rarr; API &rarr; front end, each one built and validated before the next begins; across modules, the order is deliberately lowest-risk first (Contacts, then Marketing &amp; Expenses, then Activity, then Projects &amp; Jobs last): each successful cutover proves the process works before it's applied to the part of the business that matters most.</p>
+      <p>No module is considered "cut over" until the reconciliation job has run clean for an agreed validation window. Calendar time here is the cost of doing this safely. Within each module, the sequence is backend &rarr; API &rarr; front end, each one built and validated before the next begins; across modules, the order is deliberately lowest-risk first (Contacts, then Marketing &amp; Expenses, then Activity, then Projects &amp; Jobs last). Each successful cutover proves the process works before it's applied to the part of the business that matters most.</p>
     </div>
 
     <div class="sheet-footer"><span>SWIRNOW | CRM MODERNIZATION</span><span>SHEET S-02</span><span>MIGRATION STRATEGY</span></div>
@@ -657,7 +658,7 @@
 
     <div class="section">
       <h3>Why the API layer is missing today, and why it matters</h3>
-      <p>The current front end talks directly to the database. Every business rule is scattered across app code, stored procedures, and triggers, which is a large part of why four years of vendor work got stuck: any change to the front end risks the database, and vice versa.</p>
+      <p>The current front end talks directly to the database. Every business rule is scattered across app code, stored procedures, and triggers, so any change to the front end risks the database, and vice versa.</p>
       <div class="diagram">
         <div class="dbox">Web Front End</div>
         <div class="dbox">Future Apps</div>
@@ -685,7 +686,7 @@
     </div>
 
     <div class="section">
-      <h3>Front end: replicate first, innovate second</h3>
+      <h3>Replicate the front end first, innovate second</h3>
       <p>The new interface should feel recognizable on day one (same information, same flow) even though the technology underneath is completely different. Redesigning the workflow and the technology at the same time is a common way modernization projects lose user trust.</p>
       <div class="diagram">
         <div class="dbox amber">Legacy Front End<br><small>remaining un-migrated modules</small></div>
@@ -698,32 +699,20 @@
     <div class="callout tech">
       <span class="tag"></span>
       <span class="label">Technical decision</span>
-      <p>REST is the default recommendation: simpler to build, test, and reason about for this scope than GraphQL. Framework (e.g. Django REST Framework or Node/Express) should match whatever language the front end and migration scripts are already written in, to minimize context-switching for a small team.</p>
-    </div>
-    <div class="callout tech">
-      <span class="tag"></span>
-      <span class="label">Technical decision</span>
+      <p>REST is the default recommendation, since it's simpler to build, test, and reason about for this scope than GraphQL. Framework (e.g. Django REST Framework or Node/Express) should match whatever language the front end and migration scripts are already written in, to minimize context-switching for a small team.</p>
       <p>Front-end framework choice follows the API/backend decision above for stack consistency. A modern component framework (e.g. React) is recommended for the UI itself given the responsiveness expected of a daily-use tool.</p>
     </div>
     <div class="callout biz">
       <span class="tag"></span>
       <span class="label">Business decision</span>
-      <p>Decide what genuinely needs real-time behavior (activity logging, project status changes) versus what can run as a scheduled batch (leadership reporting exports): this materially changes infrastructure cost and complexity.</p>
-    </div>
-    <div class="callout biz">
-      <span class="tag"></span>
-      <span class="label">Business decision</span>
+      <p>Decide what genuinely needs real-time behavior (activity logging, project status changes) versus what can run as a scheduled batch (leadership reporting exports). This materially changes infrastructure cost and complexity.</p>
       <p>Per-module training sessions for sales, PM, and back-office staff, timed to each cutover, plus a named point of contact for support during each module's first few live weeks, when trust in the new system is won or lost.</p>
     </div>
     <div class="callout risk">
       <span class="tag"></span>
       <span class="label">Why this unlocks the AI ask</span>
-      <p>An AI agent should never query raw production SQL. Once it calls the same governed endpoints as the front end, "find similar past jobs" or "log this expense" becomes a safe, well-defined action instead of an open-ended risk: see the AI Opportunities tab for what this actually enables.</p>
-    </div>
-    <div class="callout risk">
-      <span class="tag"></span>
-      <span class="label">Freeze window</span>
-      <p>The final, highest-stakes front-end cutover (Projects &amp; Jobs) is scheduled during the same low-activity freeze window as its data migration counterpart in S-02: front end and data risk are retired together, not separately.</p>
+      <p>An AI agent should never query raw production SQL. Once it calls the same governed endpoints as the front end, "find similar past jobs" or "log this expense" becomes a safe, well-defined action instead of an open-ended risk. See the AI Opportunities tab for what this actually enables.</p>
+      <p>The final, highest-stakes front-end cutover (Projects &amp; Jobs) is scheduled during the same low-activity freeze window as its data migration counterpart in S-02, so front end and data risk are retired together.</p>
     </div>
 
     <div class="sheet-footer"><span>SWIRNOW | CRM MODERNIZATION</span><span>SHEET S-03</span><span>API &amp; FRONT END</span></div>
@@ -733,11 +722,11 @@
   <section class="sheet" id="t4">
     <div class="sheet-num">SHEET S-04 / 04</div>
     <h2>The Bottom Line</h2>
-    <p class="sheet-sub">Same plan, no jargon: for anyone in the room who wasn't tracking the acronyms on sheets 1 through 3.</p>
+    <p class="sheet-sub">The same plan, in plain language.</p>
 
     <div class="section">
       <h3>What we're actually doing</h3>
-      <p>We're replacing the guts of the CRM without turning it off. First we fix how the data is organized, so it isn't fighting itself anymore. Then we build a clean, controlled way for anything (the website you use every day, or an AI assistant later) to safely read and update that data. Last, we rebuild the screens people actually look at, matching how you already work before we change anything about it.</p>
+      <p>We're replacing the guts of the CRM without turning it off. First we fix how the data is organized, so it isn't fighting itself anymore. Then we build a clean, controlled way for anything (the website used every day, or an AI assistant later) to safely read and update that data. Last, we rebuild the screens people actually look at, matching how the team already works before we change anything about it.</p>
     </div>
 
     <div class="section">
@@ -755,12 +744,12 @@
     </div>
 
     <div class="section">
-      <h3>What stays the same for you, day to day</h3>
+      <h3>What stays the same, day to day</h3>
       <ul>
-        <li>The system keeps working the whole time: nothing goes offline for this to happen</li>
-        <li>Your workflow looks and feels familiar at first, even though the technology underneath is new</li>
-        <li>You get training and a real person to ask, timed to whenever your part of the system actually changes</li>
-        <li>Nothing about how you log a call, a project, or an expense changes until you've been shown the new way</li>
+        <li>The system keeps working the whole time; nothing goes offline for this to happen</li>
+        <li>Workflows look and feel familiar at first, even though the technology underneath is new</li>
+        <li>Staff get training and a real person to ask, timed to whenever their part of the system actually changes</li>
+        <li>Nothing about how a call, a project, or an expense gets logged changes until staff have been shown the new way</li>
       </ul>
     </div>
 
@@ -791,29 +780,29 @@
     <section class="sheet active" id="tl1">
       <div class="sheet-num">SHEET T-01 / 03</div>
       <h2>Getting Started</h2>
-      <p class="sheet-sub">What can happen in parallel, exactly what's needed to start, and the open question about the existing codebase.</p>
+      <p class="sheet-sub">What can happen in parallel, what's exactly needed to start, and the open question about the existing codebase.</p>
 
       <div class="section">
         <h3>What starts on day one, in parallel</h3>
         <ul>
-          <li><b>Infrastructure procurement</b> and <b>discovery</b> don't depend on each other, so both begin simultaneously. Infrastructure needs just the core server and a staging environment to start: nothing else in the plan (standby server, full UPS, VPN, AI feature access) is needed yet, and follows later, tied to when it's actually required.</li>
-          <li><b>Discovery</b> means: time with the sales, PM, and back-office teams to shadow real workflows, and access to the existing Master Matrix codebase and database for audit.</li>
-          <li><b>Codebase validation</b> can run alongside both of the above: going through the previously contracted vendor's .NET Core work directly, to see what's actually there before committing to any reuse decision: detailed below.</li>
+          <li><b>Infrastructure procurement</b> and <b>discovery</b> don't depend on each other, so both begin simultaneously. Infrastructure needs just the core server and a staging environment to start; nothing else in the plan (standby server, full UPS, VPN, AI feature access) is needed yet, and follows later, tied to when it's actually required.</li>
+          <li><b>Discovery</b> means time with the sales, PM, and back-office teams to shadow real workflows, and access to the existing Master Matrix codebase and database for audit.</li>
+          <li><b>Codebase validation</b> can run alongside both of the above, going through the previously contracted vendor's .NET Core work directly to see what's actually there before committing to any reuse decision, detailed below.</li>
         </ul>
       </div>
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>Modules can overlap, not just run fully sequentially: once a module enters its validation window, work on the next module's backend can begin: the calendar time in a freeze window is mostly about earning confidence, not full-time engineering effort, so it doesn't block the next module from starting.</p>
+        <p>Modules can overlap rather than run fully sequentially. Once a module enters its validation window, work on the next module's backend can begin, since the calendar time in a freeze window is mostly about earning confidence, not full-time engineering effort, so it doesn't block the next module from starting.</p>
       </div>
 
       <div class="section">
-        <h3>The existing codebase: an open question</h3>
-        <p>The previous vendor's engagement was a technical revamp: porting the backend to .NET Core. This proposal starts from a different place: deep discovery with the sales and PM teams to understand how the business actually works, before any redesign begins. The two approaches may complement each other more than either one alone.</p>
-        <p>Two honest, realistic scenarios, and there's no way to know which applies without reviewing the actual code:</p>
+        <h3>The existing codebase, an open question</h3>
+        <p>The previous vendor's engagement was a technical revamp, porting the backend to .NET Core. This proposal starts from a different place, with deep discovery with the sales and PM teams to understand how the business actually works, before any redesign begins. The two approaches may complement each other more than either one alone.</p>
+        <p>Two possible scenarios, resolved by reviewing the actual code together:</p>
         <ul>
           <li>If the ported code faithfully preserves working business logic and mainly modernizes the language and runtime, it could meaningfully shorten the API-layer build described in S-03.</li>
-          <li>If it carried forward the same underlying schema issues identified in S-01 (the Project/Job flag, the repeating load-type columns) without addressing them, the core redesign work is largely unaffected either way: that work is about the data model, not the language it's read in.</li>
+          <li>If it carried forward the same underlying schema issues identified in S-01 (the Project/Job flag, the repeating load-type columns) without addressing them, the core redesign work is largely unaffected either way, since that work is about the data model, not the language it's written in.</li>
         </ul>
       </div>
 
@@ -824,11 +813,11 @@
     <section class="sheet" id="tl2">
       <div class="sheet-num">SHEET T-02 / 03</div>
       <h2>The Timeline Estimate</h2>
-      <p class="sheet-sub">9–12 months for the full rebuild: a number the team can actually plan around, not the fastest number that sounds good in the room.</p>
+      <p class="sheet-sub">9–12 months for the full rebuild.</p>
 
       <div class="section">
-        <h3>Why this is the right number, not a hedge</h3>
-        <p>A shorter estimate that later needs extending is more disruptive to business planning than an accurate one stated upfront: schedules get built around a promised date, and missing it costs more trust than starting with the real number. This is a ground-up rebuild, informed by direct business discovery rather than a code port, and the timeline reflects that scope honestly. This is the plan to build the schedule around.</p>
+        <h3>Why this number</h3>
+        <p>Schedules get built around a promised date. An accurate estimate stated upfront costs less trust over time than a shorter one that later needs extending. This is a ground-up rebuild, informed by direct business discovery rather than a code port, and the timeline reflects that scope.</p>
       </div>
 
       <table class="rolltable">
@@ -844,7 +833,7 @@
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>Sticking to this number is the priority, not beating it. Where overlap between modules (T-01) can genuinely compress the schedule without adding risk, it will, but the number above is what the business should plan around.</p>
+        <p>Sticking to this number is the priority. Where overlap between modules (T-01) can genuinely compress the schedule without adding risk, it will.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | TIMELINE &amp; PHASING</span><span>SHEET T-02</span><span>TIMELINE ESTIMATE</span></div>
@@ -854,21 +843,21 @@
     <section class="sheet" id="tl3">
       <div class="sheet-num">SHEET T-03 / 03</div>
       <h2>Solo Execution</h2>
-      <p class="sheet-sub">The 9–12 month estimate in T-02 already assumes one technical resource, not a team: worth stating that plainly rather than leaving it implicit.</p>
+      <p class="sheet-sub">The 9–12 month estimate in T-02 already assumes one technical resource.</p>
 
       <div class="section">
-        <h3>Working against the timeline</h3>
-        <p>One person can't parallelize effort the way a team could. If training a module's users, coordinating a freeze window, and starting the next module's backend all need real hours in the same week, that's genuine contention: not something the module overlap described in T-01 fully solves, since that reasoning assumes calendar-time overlap (waiting during another module's validation window), not effort-time overlap (actively working on two things at once).</p>
+        <h3>The Constraint: One Person, Fixed Hours</h3>
+        <p>A single product manager has a fixed number of hours in a week. Training a module's users, coordinating a freeze window, and starting the next module's backend can all land in the same week, and each one needs dedicated time. The calendar-time overlap described in T-01, where validation windows for different modules run in parallel, shortens the schedule without adding engineering hours. It doesn't create more hours in the week; it just uses the ones already available more efficiently.</p>
       </div>
 
       <div class="section">
-        <h3>Working for the timeline</h3>
-        <p>AI-assisted development: Cursor or Claude Code, both explicitly supported per the role's own scope: genuinely compresses raw coding time for a solo developer in a way that wouldn't have been true even a few years ago. That doesn't erase the constraint above, but it's a real, legitimate offset, not hand-waving.</p>
+        <h3>The Offset: AI-Assisted Development</h3>
+        <p>AI-assisted development — Cursor or Claude Code, both explicitly supported per the role's own scope — compresses raw coding time for a solo product manager in a way that wasn't possible a few years ago. That doesn't erase the constraint above, but it's a real offset.</p>
       </div>
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>If the business wants this meaningfully faster than 9–12 months, the lever isn't compressing one person's work further: it's adding a second resource. Worth deciding deliberately, not assuming either way.</p>
+        <p>If the business wants this meaningfully faster than 9–12 months, the lever is adding a second resource. Worth deciding deliberately.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | TIMELINE &amp; PHASING</span><span>SHEET T-03</span><span>SOLO EXECUTION</span></div>
@@ -894,33 +883,33 @@
     <section class="sheet active" id="inf1">
       <div class="sheet-num">SHEET INF-01 / 04</div>
       <h2>Core Server &amp; Staging</h2>
-      <p class="sheet-sub">Fully on-premises, sized with real headroom: not just for today's CRM, but for what gets added on top of it later. Specs locked, single planning numbers below, not ranges.</p>
+      <p class="sheet-sub">Fully on-premises, sized with real headroom — not just for today's CRM, but for what gets added on top of it later. Suggested specs, single planning numbers below.</p>
 
       <div class="section">
         <h3>Why a 2-socket rackmount server, not a basic tower</h3>
         <p>A single-socket tower server would comfortably handle the CRM database alone. But the plan now includes Python-based pattern analysis (AI-03, AI-05) running on top of live CRM traffic, a standby server, more concurrent users over time, and modules or features not yet defined. A tower server's RAM ceiling (128GB) is a real limit if any of that grows. Stepping up to a 2-socket rackmount server now means RAM can simply be added later without replacing the machine.</p>
-        <p>Suggested spec: Dell PowerEdge R760 (16th-generation: R750 was 15th-gen and is now superseded), 2x 16-core processors (32 total cores), 128GB DDR5 RAM via 4x 32GB RDIMMs: using only 4 of the chassis's 32 memory slots, leaving 28 open for future growth without replacing anything already installed. RAID-10 storage at 8TB usable (8x 2TB Mixed Use SAS SSDs, 16TB raw), a PERC H755 RAID controller, iDRAC9 for remote management, dual redundant hot-swap power supplies, and a rail kit for the rack enclosure below. Mixed Use drives, not Read Intensive: a deliberate choice to avoid betting on future write volume being low.</p>
-        <p>Every component, including the drives, is Dell-branded rather than third-party. Dell's ProSupport can decline to fully cover an issue if a non-Dell component is involved: a real risk for a solo IT person with no backup team to fall back on if something goes wrong. Staying all-Dell keeps the whole system under one support umbrella, worth the modest premium over mixing in cheaper third-party parts.</p>
+        <p>Suggested spec: Dell PowerEdge R760 (16th-generation; R750 was 15th-gen and is now superseded), 2x 16-core processors (32 total cores), 128GB DDR5 RAM via 4x 32GB RDIMMs, using only 4 of the chassis's 32 memory slots and leaving 28 open for future growth without replacing anything already installed. RAID-10 storage at 8TB usable (8x 2TB Mixed Use SAS SSDs, 16TB raw), a PERC H755 RAID controller, iDRAC9 for remote management, dual redundant hot-swap power supplies, and a rail kit for the rack enclosure below. Mixed Use drives, not Read Intensive, are a deliberate choice to avoid betting on future write volume being low.</p>
+        <p>Every component, including the drives, is Dell-branded rather than third-party. Dell's ProSupport can decline to fully cover an issue if a non-Dell component is involved, a real risk for a solo IT person with no backup team to fall back on if something goes wrong. Staying all-Dell keeps the whole system under one support umbrella, at a modest premium over third-party parts.</p>
       </div>
 
       <div class="section">
-        <h3>A standby server: for hardware failure, not disaster</h3>
-        <p>A second, full copy of the database, same spec as the core server, kept continuously in sync via PostgreSQL's built-in streaming replication, managed with an open-source tool like Patroni or repmgr. If the primary fails or needs maintenance, staff can be pointed at the standby within minutes instead of waiting on a restore. Failover is a deliberate, manual action: simpler and cheaper to set up correctly than fully automatic failover, and appropriate for a company this size. Once the primary is repaired, the same reverse-sync pattern used for migration rollback (S-02) brings any changes made on the standby back to the primary.</p>
+        <h3>A standby server, for hardware failure not disaster</h3>
+        <p>A second, full copy of the database, same spec as the core server, kept continuously in sync via PostgreSQL's built-in streaming replication, managed with an open-source tool like Patroni or repmgr. If the primary fails or needs maintenance, staff can be pointed at the standby within minutes instead of waiting on a restore. Failover is a deliberate, manual action, simpler and cheaper to set up correctly than fully automatic failover, and appropriate for a company this size. Once the primary is repaired, the same reverse-sync pattern used for migration rollback (S-02) brings any changes made on the standby back to the primary.</p>
       </div>
 
       <div class="section">
         <h3>Staging/test server</h3>
-        <p>Runs as a virtual machine on the standby server, not the core server: the standby has the same full spec but is mostly idle, only replicating data rather than serving live queries. Running staging there gets the same $0 additional hardware cost as running it on the core server, without risking a heavy migration-script test competing for resources with real, live production traffic.</p>
+        <p>Runs as a virtual machine on the standby server, not the core server. The standby has the same full spec but is mostly idle, only replicating data rather than serving live queries. Running staging there gets the same $0 additional hardware cost as running it on the core server, without risking a heavy migration-script test competing for resources with real, live production traffic.</p>
       </div>
 
       <div class="section">
         <h3>Database and OS licensing</h3>
-        <p>The platform decision in S-01 pays off directly here. PostgreSQL is open-source, with no per-core or per-user licensing cost at all, on the primary, the standby, or staging. Pairing it with Linux (Ubuntu Server or Rocky Linux, both free) removes the operating system licensing cost as well: no Windows Server core packs, no CALs.</p>
+        <p>The platform decision in S-01 pays off directly here. PostgreSQL is open-source, with no per-core or per-user licensing cost at all, on the primary, the standby, or staging. Pairing it with Linux (Ubuntu Server or Rocky Linux, both free) removes the operating system licensing cost as well — no Windows Server core packs, no CALs.</p>
       </div>
 
       <div class="section">
         <h3>Server rack &amp; hardware support</h3>
-        <p>A 2U rackmount server needs an actual rack enclosure to sit in properly: for cooling, cable management, and physical security, not just convenience. Separately, ProSupport Plus with 4-Hour Mission Critical is the real support product behind the number below: 24x7 support with a guaranteed 4-hour on-site technician response, not just next-business-day parts replacement or the base warranty a server ships with. The breakdown: Dell's own published upgrade price for this tier is $4,939.38 for a 36-month term, which works out to $137.20/month, or roughly $1,650/year per server: landing very close to the number below.</p>
+        <p>A 2U rackmount server needs an actual rack enclosure to sit in properly, for cooling, cable management, and physical security, not just convenience. Separately, ProSupport Plus with 4-Hour Mission Critical is the real support product behind the number below — 24x7 support with a guaranteed 4-hour on-site technician response, not just next-business-day parts replacement or the base warranty a server ships with. Dell's own published upgrade price for this tier is $4,939.38 for a 36-month term, which works out to $137.20/month, or roughly $1,650/year per server, landing very close to the number below.</p>
       </div>
 
       <table class="rolltable">
@@ -933,15 +922,15 @@
         <tr><td class="step">Server rack enclosure</td><td>18U rack cabinet</td><td>One-time</td><td>$500</td></tr>
         <tr><td class="step">Hardware support contract</td><td>Dell ProSupport Plus with 4-Hour Mission Critical, core + standby</td><td>Recurring: yearly</td><td>$3,600</td></tr>
       </table>
-      <p><b>Subtotal, this sheet:</b> $36,500 one-time, plus $3,600/year for hardware support. These are the planning figures to budget against: a formal vendor quote could land somewhat above or below this, and should be treated as the final word, not this estimate.</p>
+      <p><b>Subtotal, this sheet:</b> $36,500 one-time, plus $3,600/year for hardware support. These are the planning figures to budget against. A formal vendor quote should be treated as the final word.</p>
 
       <div class="callout tech">
         <span class="tag"></span>
-        <p>RAM headroom is the deliberate choice here, not overspending: a 2-socket server's real value is the ability to add capacity later without another hardware purchase and migration.</p>
+        <p>RAM headroom is a deliberate choice, since a 2-socket server's value is the ability to add capacity later without another hardware purchase and migration.</p>
       </div>
       <div class="callout biz">
         <span class="tag"></span>
-        <p>Confirm with Yvette that running staging as a VM on the standby server, rather than its own dedicated box, is acceptable operationally: it's the budget-friendly choice, but it does mean staging work and standby replication share the same physical machine.</p>
+        <p>Confirm with Yvette that running staging as a VM on the standby server, rather than its own dedicated box, is acceptable operationally. It's the budget-friendly choice, but it does mean staging work and standby replication share the same physical machine.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | INFRASTRUCTURE</span><span>SHEET INF-01</span><span>CORE &amp; STAGING</span></div>
@@ -951,26 +940,26 @@
     <section class="sheet" id="inf2">
       <div class="sheet-num">SHEET INF-02 / 04</div>
       <h2>Power, Network &amp; Backup</h2>
-      <p class="sheet-sub">Protection built deliberately: since none of it happens invisibly the way it would with a cloud provider.</p>
+      <p class="sheet-sub">Protection built deliberately, since none of it happens invisibly the way it would with a cloud provider.</p>
 
       <div class="section">
         <h3>Power protection</h3>
-        <p>Separate UPS units for the core and standby servers, each an APC Smart-UPS SMT2200C (by Schneider Electric), plus a smaller APC Smart-UPS SMT1500C covering the network appliance (the VPN/firewall): keeping power protection independent across the critical machines. Staging runs as a VM on the standby server, so it's already covered by the standby's own 2200VA unit, not a separate one. Re-checked against the R760's actual power specs: a non-GPU configuration like ours realistically draws 200–400W, the same range this sizing was already built on, and the R760 is measurably more power-efficient per unit of work than the R750 it replaced: so no upgrade needed here after the server model change.</p>
-        <p>The SMT2200C carries a 3-year repair-or-replace warranty on the unit itself, a separate 2-year warranty on the battery, and a $150,000 Connected Equipment Protection Policy: APC's own guarantee against damage to equipment plugged into it if the UPS fails to do its job.</p>
+        <p>Separate UPS units for the core and standby servers, each an APC Smart-UPS SMT2200C (by Schneider Electric), plus a smaller APC Smart-UPS SMT1500C covering the network appliance (the VPN/firewall), keeping power protection independent across the critical machines. Staging runs as a VM on the standby server, so it's already covered by the standby's own 2200VA unit, not a separate one. Checked against the R760's power specs, a non-GPU configuration like ours realistically draws 200–400W, the same range this sizing was already built on. The R760 is also measurably more power-efficient per unit of work than the R750 it replaced, so no upgrade is needed here after the server model change.</p>
+        <p>The SMT2200C carries a 3-year repair-or-replace warranty on the unit itself, a separate 2-year warranty on the battery, and a $150,000 Connected Equipment Protection Policy — APC's own guarantee against damage to equipment plugged into it if the UPS fails to do its job.</p>
       </div>
 
       <div class="section">
         <h3>Offsite backup</h3>
-        <p>A nightly backup routine to Backblaze B2 Cloud Storage, protecting against site-level events a standby server can't cover: priced per TB actually stored, not per computer, which fits a server backup far better than a workstation-oriented backup product. Sized for the server's full 8TB capacity, not just today's actual data usage, since that headroom exists partly for a future document archive that could genuinely fill it.</p>
+        <p>A nightly backup routine to Backblaze B2 Cloud Storage, protecting against site-level events a standby server can't cover. Priced per TB stored, which fits a server backup better than a workstation-oriented product. Sized for the server's full 8TB capacity, since that headroom exists partly for a future document archive that could genuinely fill it.</p>
       </div>
 
       <div class="section">
         <h3>AI feature usage</h3>
-        <p>Pay-per-use, scaling directly with actual usage: estimated for moderate use by ~20–40 staff.</p>
+        <p>Pay-per-use, scaling directly with actual usage, estimated for moderate use by ~20–40 staff.</p>
       </div>
 
       <table class="rolltable">
-        <tr><th>Item</th><th>Locked spec</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><th>Item</th><th>Suggested spec</th><th>Type</th><th>Est. cost</th></tr>
         <tr><td class="step">UPS: core &amp; standby</td><td>2x APC Smart-UPS SMT2200C</td><td>One-time</td><td>$3,300</td></tr>
         <tr><td class="step" style="white-space:nowrap;">UPS: network</td><td>APC Smart-UPS SMT1500C</td><td>One-time</td><td>$770</td></tr>
         <tr><td class="step">Offsite backup service</td><td>Backblaze B2 Cloud Storage, 8TB at $6/TB/month</td><td>Recurring: monthly</td><td>$48</td></tr>
@@ -982,12 +971,12 @@
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>Both the VPN and the firewall are the same physical device: a Ubiquiti UniFi Dream Machine Pro (UDM-Pro), roughly $400 one-time, plus the Ubiquiti CyberSecure subscription for ongoing threat signature updates, roughly $99/year. Since Swirnow is having a new internet connection installed, it's worth asking that provider directly whether this equipment can be bundled into the upgrade before buying it separately. Neither cost is included in the totals above, since it depends on that conversation.</p>
+        <p>Both the VPN and the firewall are the same physical device — a Ubiquiti UniFi Dream Machine Pro (UDM-Pro), roughly $400 one-time — plus the Ubiquiti CyberSecure subscription for ongoing threat signature updates, roughly $99/year. Since Swirnow is having a new internet connection installed, it's worth asking that provider directly whether this equipment can be bundled into the upgrade before buying it separately. Neither cost is included in the totals above, since it depends on that conversation.</p>
       </div>
 
       <div class="callout risk">
         <span class="tag"></span>
-        <p>The standby server covers hardware failure, not site-level disaster. If the building has a fire, flood, or theft, both the primary and standby go down together since they're co-located: only the offsite backup plan actually survives that scenario, and only if it's tested regularly.</p>
+        <p>The standby server covers hardware failure, not site-level disaster. If the building has a fire, flood, or theft, both the primary and standby go down together since they're co-located. Only the offsite backup plan actually survives that scenario, and only if it's tested regularly.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | INFRASTRUCTURE</span><span>SHEET INF-02</span><span>POWER, NETWORK &amp; BACKUP</span></div>
@@ -997,16 +986,16 @@
     <section class="sheet" id="inf3">
       <div class="sheet-num">SHEET INF-03 / 04</div>
       <h2>Security &amp; Monitoring</h2>
-      <p class="sheet-sub">Mostly configuration, not new purchases: the pieces needed are largely already included in what's already being bought.</p>
+      <p class="sheet-sub">Mostly configuration. The pieces needed are largely already included in the hardware and software being purchased elsewhere in this proposal.</p>
 
       <div class="section">
         <h3>Security</h3>
         <ul>
           <li><b>Encryption in transit</b>: standard TLS/SSL between the browser, API, and database, using free certificates (Let's Encrypt)</li>
           <li><b>Encryption at rest</b>: disk-level encryption (LUKS, standard on Linux), or PostgreSQL's pgcrypto extension for column-level encryption, both open-source and included</li>
-          <li><b>Role-based access control</b>: enforced at the API layer (S-03): a sales rep's login only ever returns what a sales rep should see</li>
+          <li><b>Role-based access control</b>: enforced at the API layer (S-03), so a sales rep's login only ever returns what a sales rep should see</li>
           <li><b>Multi-factor authentication</b>: for VPN and admin logins, natively supported by the UDM-Pro (INF-02) whether it's purchased separately or bundled through the new ISP</li>
-          <li><b>Patch management</b>: a real recurring schedule, tested on staging first before production, owned by whoever is doing IT day to day: currently a one-person responsibility, worth keeping realistic rather than assuming a team's worth of coverage</li>
+          <li><b>Patch management</b>: a real recurring schedule, tested on staging first before production, owned by whoever is doing IT day to day — currently a one-person responsibility</li>
           <li><b>A password/secrets manager</b>: for the small number of people who need access to shared admin credentials (database, server, firewall logins), not personal passwords everyone already remembers on their own</li>
         </ul>
       </div>
@@ -1014,9 +1003,9 @@
       <div class="section">
         <h3>Monitoring</h3>
         <ul>
-          <li><b>Server health</b>: CPU, RAM, disk, uptime: built into Dell's iDRAC9 on both the core and standby R760s, no extra cost</li>
+          <li><b>Server health</b>: CPU, RAM, disk, uptime — built into Dell's iDRAC9 on both the core and standby R760s, no extra cost</li>
           <li><b>Database monitoring</b>: pg_cron or standard OS-level scheduled jobs on Linux, open-source, can alert on issues like low disk space automatically</li>
-          <li><b>Security monitoring</b>: intrusion detection (IDS/IPS) built into the UDM-Pro, same conditional status as MFA above: in place once the VPN/firewall question in INF-02 is resolved</li>
+          <li><b>Security monitoring</b>: intrusion detection (IDS/IPS) built into the UDM-Pro, same conditional status as MFA above — in place once the VPN/firewall question in INF-02 is resolved</li>
           <li><b>Backup verification</b>: an automated alert confirming last night's B2 backup actually completed, not just assumed</li>
           <li><b>AI usage monitoring</b>: a spending cap and alert set with the AI provider, so a usage spike is a notification, not a surprise bill</li>
         </ul>
@@ -1029,7 +1018,7 @@
 
       <div class="callout tech">
         <span class="tag"></span>
-        <p>Almost none of this needs new purchased tools: PostgreSQL, Linux, the Dell R760 hardware, and (once resolved) the firewall appliance already include what's needed. The real cost here is configuration discipline and a recurring schedule, not additional line items on the budget.</p>
+        <p>Almost none of this needs new purchased tools: PostgreSQL, Linux, the Dell R760 hardware, and (once resolved) the firewall appliance already include what's needed. The cost here is configuration discipline and a recurring schedule.</p>
       </div>
 
       <div class="callout biz">
@@ -1044,7 +1033,7 @@
     <section class="sheet" id="inf4">
       <div class="sheet-num">SHEET INF-04 / 04</div>
       <h2>Workstation Requirements</h2>
-      <p class="sheet-sub">What the developer actually needs day to day: separate from the servers, and nothing exotic.</p>
+      <p class="sheet-sub">What the developer needs day to day, separate from the servers.</p>
 
       <div class="section">
         <h3>The setup</h3>
@@ -1052,13 +1041,13 @@
       </div>
 
       <table class="rolltable">
-        <tr><th>Item</th><th>Locked spec</th><th>Type</th><th>Est. cost</th></tr>
+        <tr><th>Item</th><th>Suggested spec</th><th>Type</th><th>Est. cost</th></tr>
         <tr><td class="step">Laptop</td><td>Lenovo ThinkPad T16 Gen 4, Core Ultra 7, 32GB RAM, 1TB SSD</td><td>One-time</td><td>$1,500</td></tr>
       </table>
 
       <div class="section">
-        <h3>The full picture: time and cost together</h3>
-        <p>Every number from every sheet on this site, pulled into one place: single planning numbers, not ranges:</p>
+        <h3>The full picture, time and cost together</h3>
+        <p>Every number from every sheet on this site, pulled into one place. Single planning numbers throughout:</p>
         <table class="rolltable">
           <tr><th>Category</th><th>Total</th></tr>
           <tr><td class="step">Implementation timeline</td><td>9 – 12 months (see T-02)</td></tr>
@@ -1070,7 +1059,7 @@
 
       <div class="callout final grand-total">
         <span class="tag"></span>
-        <p>9 to 12 months, $42,070 one-time, and $183/month recurring (or $583/month if IT is outsourced) for a fully redundant, on-premises system built to last: a single planning number for a fully locked spec, not the fastest number possible, but the one the business can actually plan around.</p>
+        <p>9 to 12 months, $42,070 one-time, and $183/month recurring (or $583/month if IT is outsourced) for a fully redundant, on-premises system built to last — a single planning number based on the suggested spec.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | INFRASTRUCTURE</span><span>SHEET INF-04</span><span>WORKSTATION</span></div>
@@ -1097,10 +1086,10 @@
     <section class="sheet active" id="ai1">
       <div class="sheet-num">SHEET AI-01 / 05</div>
       <h2>Find Similar Past Jobs</h2>
-      <p class="sheet-sub">Type in what a new project looks like, and instantly see every similar job Swirnow has done: going back decades.</p>
+      <p class="sheet-sub">Type in what a new project looks like, and instantly see every similar job Swirnow has done — going back decades.</p>
 
       <div class="section">
-        <h3>The problem today</h3>
+        <h3>The challenge today</h3>
         <p>When someone's estimating a new project, the only way to remember "didn't we do something like this a few years ago?" is to actually remember it. Twenty years of recorded projects are only useful if someone happens to recall the right example at the right moment.</p>
       </div>
 
@@ -1111,7 +1100,7 @@
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>This turns one person's memory into something the whole team can use: new hires get the same institutional knowledge instantly that used to take years to build up.</p>
+        <p>This turns one person's memory into something the whole team can use. New hires get the same institutional knowledge instantly that used to take years to build up.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-01</span><span>SIMILAR PROJECTS</span></div>
@@ -1121,16 +1110,16 @@
     <section class="sheet" id="ai2">
       <div class="sheet-num">SHEET AI-02 / 05</div>
       <h2>Smarter Pricing</h2>
-      <p class="sheet-sub">Know instantly what similar past projects actually sold for: before a quote goes out the door.</p>
+      <p class="sheet-sub">Know instantly what similar past projects actually sold for, before a quote goes out the door.</p>
 
       <div class="section">
         <h3>What this fixes</h3>
-        <p>Right now, pricing judgment lives mostly in a few experienced people's heads. This shows, for any new quote, what similar past projects were priced at: so a number that looks too high or too low gets a second look before it's sent, not after.</p>
+        <p>Right now, pricing judgment lives mostly in a few experienced people's heads. This shows, for any new quote, what similar past projects were priced at, so a number that looks too high or too low gets a second look before it's sent, not after.</p>
       </div>
 
       <div class="callout risk">
         <span class="tag"></span>
-        <p>Old prices need to be adjusted for inflation: comparing a quote from today straight to a job from 15 years ago wouldn't be a fair comparison.</p>
+        <p>Old prices need to be adjusted for inflation, since comparing a quote from today straight to a job from 15 years ago wouldn't be a fair comparison.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-02</span><span>PRICING BENCHMARK</span></div>
@@ -1140,7 +1129,7 @@
     <section class="sheet" id="ai3">
       <div class="sheet-num">SHEET AI-03 / 05</div>
       <h2>Why Deals Win or Lose</h2>
-      <p class="sheet-sub">Decades of "why we lost it" and "why we won it": turned into patterns leadership can actually act on.</p>
+      <p class="sheet-sub">Decades of "why we lost it" and "why we won it," turned into patterns leadership can actually act on.</p>
 
       <div class="section">
         <h3>What this fixes</h3>
@@ -1153,7 +1142,7 @@
       </div>
       <div class="callout tech">
         <span class="tag"></span>
-        <p>The pattern-finding itself is standard database analysis, not AI: grouping and comparing reasons across every project, run directly on Swirnow's own server. AI only gets used at the very end, to turn the finding into a plain-language summary, or to help read reasons that were written as free text instead of picked from a fixed list.</p>
+        <p>The pattern-finding itself is standard database analysis: grouping and comparing reasons across every project, run directly on Swirnow's own server. AI is only used at the very end, to turn the finding into a plain-language summary, or to help read reasons that were written as free text instead of picked from a fixed list.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-03</span><span>WIN / LOSS PATTERNS</span></div>
@@ -1169,13 +1158,13 @@
         <h3>What this fixes</h3>
         <ul>
           <li>A customer who's bought floor systems for years but never cladding: an easy upsell nobody has to remember to notice</li>
-          <li>A once-frequent customer who's gone quiet compared to their own normal pattern: not just a generic "60 days, no activity" rule</li>
+          <li>A once-frequent customer who's gone quiet compared to their own normal pattern, measured against that customer's own historical pattern</li>
         </ul>
       </div>
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>Decide who sees this: each sales rep for their own accounts, or leadership looking across the whole customer base. Both are useful, for different reasons.</p>
+        <p>Decide who sees this: each Sales Rep for their own accounts, or leadership looking across the whole customer base. Both are useful, for different reasons.</p>
       </div>
 
       <div class="sheet-footer"><span>SWIRNOW | AI OPPORTUNITIES</span><span>SHEET AI-04</span><span>RELATIONSHIP INTEL</span></div>
@@ -1199,7 +1188,7 @@
 
       <div class="callout risk">
         <span class="tag"></span>
-        <p>This gets sharper the more history is available. It works best for repeat clients with a real track record: for a brand-new client, there's nothing to learn from yet, so this feature naturally improves as the new system captures more history over time.</p>
+        <p>This gets sharper the more history is available. It works best for repeat clients with a real track record. For a brand-new client, there's nothing to learn from yet, so this feature naturally improves as the new system captures more history over time.</p>
       </div>
       <div class="callout tech">
         <span class="tag"></span>
