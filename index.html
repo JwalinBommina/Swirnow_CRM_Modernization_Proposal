@@ -561,7 +561,7 @@
         <div class="dbox accent">JobDetails<br><small>1:1, only exists once contracted</small></div>
       </div>
       <div class="diagram-caption">Proposed: lifecycle modeled as state history, not a boolean</div>
-      <p>The repeating load-type and question fields move into proper child tables keyed back to the project, removing the artificial 3-item / 7-item caps. The activity log gets a companion <code>ActivitySampleRequest</code> table so the core log stays generic again. Confirmed with DJ that once a Project becomes a Job, it never reverts back. The lifecycle model only needs to support forward progression, which simplifies the design.</p>
+      <p>The repeating load-type and question fields move into proper child tables keyed back to the project, removing the artificial 3-item / 7-item caps. The activity log gets a companion <code>ActivitySampleRequest</code> table so the core log stays generic again. A Job can revert back to a Project: rare, but it happens (Yvette recalls roughly 3 times in 10+ years), and it may be worth supporting deliberately rather than treating as an edge case. The lifecycle model is built as a timestamped state history rather than a one-way flag specifically so it can support this.</p>
     </div>
 
     <div class="section">
@@ -586,6 +586,11 @@
       <span class="tag"></span>
       <span class="label">Known limitation</span>
       <p>Historical Project&rarr;Job transition dates were never captured, only the current flag state. Migration can backfill a single snapshot per record, not a true history. Future transitions will be fully timestamped going forward.</p>
+    </div>
+    <div class="callout biz">
+      <span class="tag"></span>
+      <span class="label">Business decision</span>
+      <p>Reverting a Job back to a Project is rare but real. Worth deciding whether this should be a first-class, governed action in the new system (its own endpoint, its own audit trail) rather than something handled manually as a one-off.</p>
     </div>
 
     <div class="sheet-footer"><span>SWIRNOW | CRM MODERNIZATION</span><span>SHEET S-01</span><span>DATABASE STRUCTURE</span></div>
@@ -679,6 +684,7 @@
         <tr><th>Endpoint</th><th>Purpose</th></tr>
         <tr><td class="step">/projects</td><td>Create, read, update project &amp; building specs</td></tr>
         <tr><td class="step">/projects/{id}/convert-to-job</td><td>The Project→Job transition as one governed action: not a raw flag flip</td></tr>
+        <tr><td class="step">/jobs/{id}/revert-to-project</td><td>Rare but real (per S-01): a governed action with its own audit trail, not a manual database edit</td></tr>
         <tr><td class="step">/contacts</td><td>Manage people &amp; their company/role associations</td></tr>
         <tr><td class="step">/activities</td><td>Log calls, meetings, sample requests</td></tr>
         <tr><td class="step">/expenses</td><td>Log &amp; categorize expenses tied to an activity</td></tr>
@@ -846,13 +852,13 @@
       <p class="sheet-sub">The 9–12 month estimate in T-02 already assumes one technical resource.</p>
 
       <div class="section">
-        <h3>The Constraint: One Person, Fixed Hours</h3>
-        <p>A single product manager has a fixed number of hours in a week. Training a module's users, coordinating a freeze window, and starting the next module's backend can all land in the same week, and each one needs dedicated time. The calendar-time overlap described in T-01, where validation windows for different modules run in parallel, shortens the schedule without adding engineering hours. It doesn't create more hours in the week; it just uses the ones already available more efficiently.</p>
+        <h3>The Limits of Parallel Work</h3>
+        <p>A single Product Manager can only work on one thing at a time. Training a module's users, coordinating a freeze window, and starting the next module's backend can all land in the same week, and each one needs dedicated attention. The calendar-time overlap described in T-01, where validation windows for different modules run in parallel, shortens the schedule without adding engineering capacity. It doesn't let two things get worked on at once; it just uses the calendar more efficiently.</p>
       </div>
 
       <div class="section">
-        <h3>The Offset: AI-Assisted Development</h3>
-        <p>AI-assisted development — Cursor or Claude Code, both explicitly supported per the role's own scope — compresses raw coding time for a solo product manager in a way that wasn't possible a few years ago. That doesn't erase the constraint above, but it's a real offset.</p>
+        <h3>What AI Tools Change</h3>
+        <p>AI-assisted development — Cursor or Claude Code, both explicitly supported per the role's own scope — compresses raw coding time for a solo Product Manager in a way that wasn't possible a few years ago. That doesn't erase the constraint above, but it's a real offset.</p>
       </div>
 
       <div class="callout biz">
@@ -1138,7 +1144,7 @@
 
       <div class="callout biz">
         <span class="tag"></span>
-        <p>This can work two ways: a quarterly trend report for leadership, or a live nudge for sales reps while they're still working a deal. Worth deciding which matters more first.</p>
+        <p>This can work two ways: a quarterly trend report for leadership, or a live nudge for Sales Reps while they're still working a deal. Worth deciding which matters more first.</p>
       </div>
       <div class="callout tech">
         <span class="tag"></span>
