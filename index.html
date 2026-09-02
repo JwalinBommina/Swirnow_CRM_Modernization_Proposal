@@ -1084,7 +1084,7 @@
       <button class="tab-btn" data-tab="ai3" role="tab" aria-selected="false"><span class="num">AI-03</span><span class="label">Win / Loss Patterns</span></button>
       <button class="tab-btn" data-tab="ai4" role="tab" aria-selected="false"><span class="num">AI-04</span><span class="label">Relationship Intel</span></button>
       <button class="tab-btn" data-tab="ai5" role="tab" aria-selected="false"><span class="num">AI-05</span><span class="label">Client Slow Spots</span></button>
-      <button class="tab-btn" data-tab="ai6" role="tab" aria-selected="false"><span class="num">AI-06</span><span class="label">2D to 3D Plans</span></button>
+      <button class="tab-btn" data-tab="ai6" role="tab" aria-selected="false"><span class="num">AI-06</span><span class="label">Facade Renders</span></button>
     </div>
 
     <div class="sheets">
@@ -1205,29 +1205,39 @@
       <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-05</span><span>CLIENT SLOW SPOTS</span></div>
     </section>
 
-    <!-- ===================== AI-06 - 2D TO 3D PLANS ===================== -->
+    <!-- ===================== AI-06 - FACADE RENDERS ===================== -->
     <section class="sheet" id="ai6">
       <div class="sheet-num">SHEET AI-06 / 06</div>
-      <h2>2D to 3D Floor Plans</h2>
-      <p class="sheet-sub">Take a flat structural layout and turn it into a 3D model a client or GC can actually look at, instead of a drawing they have to interpret.</p>
+      <h2>Photorealistic Facade Renders</h2>
+      <p class="sheet-sub">Turn a flat Avenere Cladding elevation drawing into a photorealistic render of what the finished facade will actually look like.</p>
 
       <div class="section">
         <h3>What this fixes</h3>
-        <p>Structural floor system layouts (columns, beams, composite joists) are drawn flat today. Reading them takes training. A 3D model of the same layout is something anyone in the room can understand at a glance, whether that's a client, a GC, or a new estimator.</p>
+        <p>A cladding elevation drawing is technically complete but hard for a client to picture. Panel colors, joint patterns, and how the facade actually reads on a real building all get lost in a flat line drawing. An AI-generated render closes that gap, before a single panel is fabricated.</p>
       </div>
 
       <div class="section">
-        <h3>A working concept demo</h3>
-        <p>Built with sample data, not a real project, to show the idea concretely rather than just describe it. Drag to reveal the 2D plan turning into a 3D model, then rotate the model freely.</p>
-        <p><a href="floor-demo.html" target="_blank" style="display:inline-block;margin-top:6px;padding:12px 22px;background:var(--orange);color:var(--tag-light);text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;font-size:13px;">Open the demo &rarr;</a></p>
+        <h3>Why this is genuinely an AI feature</h3>
+        <p>There's no source geometry to just extrude here. An AI model has to interpret the elevation drawing and generate a photorealistic image of the material, color, and texture. That's real generation, not deterministic parsing, and it's the kind of thing hosted AI image models are already good at.</p>
+      </div>
+
+      <div class="section">
+        <h3>A working concept mockup</h3>
+        <p>Built with sample data and a stylized render, not a real AI-generated image, to show the idea concretely. Drag to reveal the elevation drawing turning into a rendered facade.</p>
+        <p><a href="facade-demo.html" target="_blank" style="display:inline-block;margin-top:6px;padding:12px 22px;background:var(--orange);color:var(--tag-light);text-decoration:none;font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;font-size:13px;">Open the demo &rarr;</a></p>
       </div>
 
       <div class="callout risk">
         <span class="tag"></span>
-        <p>Whether this can work reliably depends on the source format. If real floor system layouts exist as structured CAD files (DWG/DXF), converting them to 3D is a solid, low-risk build. If they only exist as scanned or flattened drawings, AI-based 3D reconstruction is unreliable for anything load-bearing, and shouldn't be used without engineering review.</p>
+        <p>A rendered facade is a sales and communication tool, not a fabrication document. Panel dimensions, attachment details, and code compliance still come from the actual engineered drawings. Worth being explicit with clients that the render shows intent, not exact specification.</p>
       </div>
 
-      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-06</span><span>2D TO 3D PLANS</span></div>
+      <div class="callout biz">
+        <span class="tag"></span>
+        <p>This only applies to Avenere Cladding. Worth deciding whether this starts as a sales tool for the cladding team specifically, rather than a general feature across all project types.</p>
+      </div>
+
+      <div class="sheet-footer"><span>SWIRNOW | AI USE CASES</span><span>SHEET AI-06</span><span>FACADE RENDERS</span></div>
     </section>
 
     </div>
