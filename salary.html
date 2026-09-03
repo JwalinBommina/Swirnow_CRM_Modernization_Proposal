@@ -300,6 +300,8 @@
   }
   .title-box .title-label{font-size:10.5px;letter-spacing:2px;color:var(--orange-deep);margin-bottom:10px;font-weight:700;}
   .title-box .title-value{font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+  .title-box .title-backup{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px;}
+  .title-box .title-backup span{color:var(--orange-deep);font-weight:700;letter-spacing:0.5px;}
   .title-box .title-desc{font-size:13px;line-height:1.7;color:var(--ink-soft);}
   .title-box .title-desc b{color:var(--ink);}
 
@@ -331,6 +333,70 @@
   .visa-phase .phase-desc{font-size:11.5px;line-height:1.6;color:var(--blue-pale);}
 
   .visa-footnote{font-size:11px;line-height:1.7;color:var(--ink-soft);opacity:0.85;max-width:700px;margin-top:8px;}
+
+  .milestone-path-wrap{
+    position:relative;
+    width:100%;
+    aspect-ratio:900/280;
+    margin:28px 0 16px;
+  }
+  .milestone-svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+  }
+  .flag{
+    position:absolute;
+    transform:translate(-50%,-50%);
+  }
+  .flag-stem{
+    position:absolute;
+    left:50%;
+    width:2px;
+    background:var(--orange);
+  }
+  .flag-stem-up{ bottom:6px; height:26px; }
+  .flag-stem-down{ top:6px; height:26px; }
+  .flag-label{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:118px;
+    text-align:center;
+  }
+  .flag-label-up{ bottom:38px; }
+  .flag-label-down{ top:38px; }
+  .flag-label-start{
+    position:absolute;
+    left:50%;
+    top:16px;
+    transform:translateX(-50%);
+    font-size:10px;
+    letter-spacing:1px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .flag-title{
+    font-size:11.5px;
+    line-height:1.4;
+    font-weight:600;
+    color:var(--navy);
+  }
+  @media (max-width:700px){
+    .milestone-path-wrap{aspect-ratio:900/420;}
+    .flag-label{width:88px;}
+    .flag-title{font-size:9.5px;}
+    .flag-label-up{bottom:34px;}
+    .flag-label-down{top:34px;}
+  }
+
+  .value-line{
+    font-size:13.5px;
+    line-height:1.6;
+    color:var(--ink-soft);
+    margin:0;
+  }
 
   .rate-strip-tiered{
     background:var(--navy-line);
@@ -428,43 +494,100 @@
       <div class="skills-grid">
         <div class="skill-card">
           <div class="skill-card-label">SOFTWARE ENGINEERING</div>
-          <ul class="skill-list">
-            <li>Python, SQL, REST API design</li>
-            <li>Full-stack: backend, API layer, front-end integration</li>
-            <li>AI-assisted development (Claude Code, Cursor)</li>
-          </ul>
+          <p class="value-line">Builds the actual product in-house, no separate engineer hire needed.</p>
         </div>
         <div class="skill-card">
           <div class="skill-card-label">TECHNICAL PRODUCT MGMT</div>
-          <ul class="skill-list">
-            <li>Requirements discovery &amp; stakeholder interviews</li>
-            <li>Phased rollout planning, risk sequencing</li>
-            <li>Technical proposal writing &amp; presentation</li>
-          </ul>
+          <p class="value-line">Turns business goals into a working plan, delivered on time.</p>
         </div>
         <div class="skill-card">
           <div class="skill-card-label">DATABASE ADMINISTRATION</div>
-          <ul class="skill-list">
-            <li>Schema design &amp; normalization</li>
-            <li>Live migration strategy: CDC (Change Data Capture), reconciliation, rollback</li>
-            <li>PostgreSQL, replication &amp; high availability</li>
-          </ul>
+          <p class="value-line">Protects the data during the CRM switch, so nothing breaks or gets lost.</p>
         </div>
         <div class="skill-card">
           <div class="skill-card-label">IT SYSTEMS ADMINISTRATION</div>
-          <ul class="skill-list">
-            <li>Linux server administration, remote management</li>
-            <li>Infrastructure planning: HA (High Availability), backup, security</li>
-            <li>Vendor &amp; hardware procurement evaluation</li>
-          </ul>
+          <p class="value-line">Keeps servers running and secure, so downtime doesn't cost customers.</p>
         </div>
         <div class="skill-card">
           <div class="skill-card-label">DATA ANALYSIS</div>
-          <ul class="skill-list">
-            <li>Pattern-finding: win/loss, pricing, client behavior</li>
-            <li>Python-based analysis pipelines</li>
-            <li>Translating findings into plain-language decisions</li>
-          </ul>
+          <p class="value-line">Turns sales data into decisions that grow revenue.</p>
+        </div>
+      </div>
+
+      <h2 class="display" style="margin-top:56px;">Milestones along the way.</h2>
+      <div class="prose">
+        <p>Sequenced by risk: lowest-risk modules first to prove the pipeline, highest-complexity work last, once it's proven.</p>
+      </div>
+
+      <div class="milestone-path-wrap">
+        <svg class="milestone-svg" viewBox="0 0 900 280" preserveAspectRatio="xMidYMid meet">
+          <path d="M40,130 C105,130 105,70 170,70 C235,70 235,190 300,190 C365,190 365,70 430,70 C495,70 495,190 560,190 C625,190 625,70 690,70 C755,70 755,190 820,190"
+                fill="none" stroke="#9FC4E8" stroke-width="3" stroke-dasharray="1 10" stroke-linecap="round"/>
+          <circle cx="40" cy="130" r="5" fill="#1B3A5C"/>
+          <circle cx="170" cy="70" r="7" fill="#10233A" stroke="#E8722C" stroke-width="2.5"/>
+          <circle cx="300" cy="190" r="7" fill="#10233A" stroke="#E8722C" stroke-width="2.5"/>
+          <circle cx="430" cy="70" r="7" fill="#10233A" stroke="#E8722C" stroke-width="2.5"/>
+          <circle cx="560" cy="190" r="7" fill="#10233A" stroke="#E8722C" stroke-width="2.5"/>
+          <circle cx="690" cy="70" r="7" fill="#10233A" stroke="#E8722C" stroke-width="2.5"/>
+          <circle cx="820" cy="190" r="7" fill="#10233A" stroke="#E8722C" stroke-width="2.5"/>
+
+          <rect x="72" y="118" width="62" height="22" rx="11" fill="#F6F3EA"/>
+          <text x="103" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#B8540F">4–5 wks</text>
+
+          <rect x="202" y="118" width="62" height="22" rx="11" fill="#F6F3EA"/>
+          <text x="233" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#B8540F">5–6 wks</text>
+
+          <rect x="332" y="118" width="62" height="22" rx="11" fill="#F6F3EA"/>
+          <text x="363" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#B8540F">5–6 wks</text>
+
+          <rect x="462" y="118" width="62" height="22" rx="11" fill="#F6F3EA"/>
+          <text x="493" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#B8540F">6–8 wks</text>
+
+          <rect x="588" y="118" width="72" height="22" rx="11" fill="#F6F3EA"/>
+          <text x="624" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#B8540F">15–22 wks</text>
+
+          <rect x="722" y="118" width="62" height="22" rx="11" fill="#F6F3EA"/>
+          <text x="753" y="133" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="12" font-weight="700" fill="#B8540F">4–5 wks</text>
+        </svg>
+
+        <div class="flag" style="left:4.4%; top:46.4%;">
+          <div class="flag-label flag-label-start">Kickoff</div>
+        </div>
+        <div class="flag" style="left:18.9%; top:25%;">
+          <div class="flag-stem flag-stem-up"></div>
+          <div class="flag-label flag-label-up">
+            <div class="flag-title">Discovery &amp; assessment complete</div>
+          </div>
+        </div>
+        <div class="flag" style="left:33.3%; top:67.9%;">
+          <div class="flag-stem flag-stem-down"></div>
+          <div class="flag-label flag-label-down">
+            <div class="flag-title">Contacts module live</div>
+          </div>
+        </div>
+        <div class="flag" style="left:47.8%; top:25%;">
+          <div class="flag-stem flag-stem-up"></div>
+          <div class="flag-label flag-label-up">
+            <div class="flag-title">Marketing &amp; Expenses live</div>
+          </div>
+        </div>
+        <div class="flag" style="left:62.2%; top:67.9%;">
+          <div class="flag-stem flag-stem-down"></div>
+          <div class="flag-label flag-label-down">
+            <div class="flag-title">Activity module live</div>
+          </div>
+        </div>
+        <div class="flag" style="left:76.7%; top:25%;">
+          <div class="flag-stem flag-stem-up"></div>
+          <div class="flag-label flag-label-up">
+            <div class="flag-title">Projects &amp; Jobs, lifecycle redesign live</div>
+          </div>
+        </div>
+        <div class="flag" style="left:91.1%; top:67.9%;">
+          <div class="flag-stem flag-stem-down"></div>
+          <div class="flag-label flag-label-down">
+            <div class="flag-title">Stabilized, documented, handed off</div>
+          </div>
         </div>
       </div>
 
@@ -545,7 +668,8 @@
 
       <div class="title-box">
         <div class="title-label">ON TITLE</div>
-        <div class="title-value">Head of Software Engineering &amp; Product</div>
+        <div class="title-value">Head of Software Engineering, Product &amp; AI</div>
+        <div class="title-backup"><span>Backup:</span> Technical Lead – Software Engineering, Product &amp; AI</div>
         <div class="title-desc">O-1A weighs heavily on proving a <b>"critical or essential role."</b> Given the actual scope here, sole technical owner of the database, API layer, infrastructure, and analysis, this title better documents that standard than a narrower one would, and strengthens the case alongside an org chart and role description.</div>
       </div>
 
